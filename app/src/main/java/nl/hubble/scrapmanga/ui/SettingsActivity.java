@@ -1,17 +1,22 @@
 package nl.hubble.scrapmanga.ui;
 
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Looper;
 import android.widget.Toast;
 
 import androidx.annotation.StringRes;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import java.io.File;
 import java.io.IOException;
 
 import nl.hubble.scraper.util.Utils;
 import nl.hubble.scrapmanga.R;
 import nl.hubble.scrapmanga.model.CustomActivity;
+import nl.hubble.scrapmanga.util.DatabaseHelper;
+import nl.hubble.scrapmanga.util.DownloadTask;
 
 public class SettingsActivity extends CustomActivity {
 
@@ -41,6 +46,34 @@ public class SettingsActivity extends CustomActivity {
                     e.printStackTrace();
                 }
                 return false;
+            });
+
+            addListener(R.string.download_database, preference -> {
+                String pathIn = requireContext().getExternalFilesDir(null).getAbsolutePath() + File.separator + "databases" + File.separator + DatabaseHelper.DB_NAME;
+                String pathOut = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + "manga.db";
+                DownloadTask dt = new DownloadTask(pathIn, pathOut, new DownloadTask.DownloadListener() {
+                    @Override
+                    public void onFinish() {
+                        Looper.prepare();
+                        Toast.makeText(requireContext(), "Finished downloading!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Looper.prepare();
+                        e.printStackTrace();
+                        Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void cancelled() {
+                        Looper.prepare();
+                        Toast.makeText(requireContext(), "Cancelled!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                dt.start();
+                Toast.makeText(requireContext(), "Downloading...", Toast.LENGTH_SHORT).show();
+                return true;
             });
         }
 

@@ -20,7 +20,17 @@ import nl.hubble.scraper.type.WhimSubs;
 
 /**
  * - MangaSushi
- * -
+ * - bato.to
+ * - fanfox.net
+ * - mngdoom.com
+ * - niadd.com
+ * - mangafreak.net
+ * - mangapark.net
+ * - mangainn.net
+ * - mngdoom.com
+ * - honto.jp
+ * - holymanga.net
+ * - manytoon.com
  */
 public class MangaScraper {
     private final ArrayList<BaseScraper> scrapers = new ArrayList<>();

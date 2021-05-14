@@ -46,4 +46,14 @@
             app:title="Login to MangaDex" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Miscellaneous">
+
+        <Preference
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="@string/download_database"
+            app:title="@string/download_database" />
+    </PreferenceCategory>
 </PreferenceScreen>

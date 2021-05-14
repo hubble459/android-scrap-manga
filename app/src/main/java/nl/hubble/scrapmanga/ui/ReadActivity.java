@@ -28,7 +28,7 @@ import nl.hubble.scrapmanga.adapter.ImageAdapter;
 import nl.hubble.scrapmanga.model.CustomActivity;
 import nl.hubble.scrapmanga.model.Reading;
 import nl.hubble.scrapmanga.util.LoadChapter;
-import nl.hubble.scrapmanga.utils.ScrapUtils;
+import nl.hubble.scrapmanga.util.ScrapUtils;
 import nl.hubble.scrapmanga.view.PaginationView;
 
 public class ReadActivity extends CustomActivity implements LoadChapter.OnFinishedListener, PaginationView.PaginationListener {

@@ -60,4 +60,5 @@
     <string name="use_lazy_load_default">Use Lazy Load by Default</string>
     <string name="reset_queries_key">reset_queries</string>
     <string name="reset_database_key">reset_database</string>
+    <string name="download_database">Download Database</string>
 </resources>

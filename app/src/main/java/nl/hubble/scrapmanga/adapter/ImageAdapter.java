@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 import nl.hubble.scrapmanga.R;
-import nl.hubble.scrapmanga.utils.ScrapUtils;
+import nl.hubble.scrapmanga.util.ScrapUtils;
 
 public class ImageAdapter extends ArrayAdapter<String> {
     private final String referer;

@@ -1,4 +1,4 @@
-package nl.hubble.scrapmanga.utils;
+package nl.hubble.scrapmanga.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
