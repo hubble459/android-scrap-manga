@@ -1,0 +1,3 @@
+rootProject.name = "Scrap Manga"
+include ':app'
+include ':app:scraper'

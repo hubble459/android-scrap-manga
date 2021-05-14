@@ -1,0 +1,102 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TableRow
+        android:id="@+id/status"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:width="100dp"
+            android:gravity="end"
+            android:text="@string/status"
+            android:textColor="@color/colorPrimaryVariant" />
+
+        <TextView
+            android:width="10dp"
+            android:text="@string/colon_" />
+
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_weight=".5"
+            tools:text="Ongoing" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/authors"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:width="100dp"
+            android:gravity="end"
+            android:text="@string/author_s"
+            android:textColor="@color/colorPrimaryVariant" />
+
+        <TextView android:text="@string/colon_" />
+
+        <TextView
+            android:id="@+id/authors_text"
+            android:layout_weight=".5"
+            tools:text="Shiroichi Amaui" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/alts"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:width="100dp"
+            android:gravity="end"
+            android:text="@string/alt_title_s"
+            android:textColor="@color/colorPrimaryVariant" />
+
+        <TextView android:text="@string/colon_" />
+
+        <TextView
+            android:id="@+id/alts_text"
+            android:layout_weight=".5"
+            tools:text="Title 1; Title 2" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/genres"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:width="100dp"
+            android:gravity="end"
+            android:text="@string/genre_s"
+            android:textColor="@color/colorPrimaryVariant" />
+
+        <TextView android:text="@string/colon_" />
+
+        <TextView
+            android:id="@+id/genres_text"
+            android:layout_weight=".5"
+            tools:text="Action; Romance" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/updated"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:width="100dp"
+            android:gravity="end"
+            android:text="@string/updated"
+            android:textColor="@color/colorPrimaryVariant" />
+
+        <TextView android:text="@string/colon_" />
+
+        <TextView
+            android:id="@+id/updated_text"
+            android:layout_weight=".5"
+            tools:text="27/01/2021 3:25 PM" />
+    </TableRow>
+</TableLayout>

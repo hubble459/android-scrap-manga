@@ -1,0 +1,63 @@
+<resources>
+    <string name="app_name">Scrap Manga</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="preference_file_key">nl.hubble.scrapmanga_preferences.xml</string>
+    <string name="cover">cover</string>
+    <string name="colon_">:</string>
+    <string name="genre_s">Genre(s)</string>
+    <string name="status">Status</string>
+    <string name="author_s">Author(s)</string>
+    <string name="updated">Updated</string>
+    <string name="description">Description</string>
+    <string name="manga">Manga</string>
+    <string name="first">First</string>
+    <string name="continue_">Continue</string>
+    <string name="chapters">Chapters</string>
+    <string name="loading">loading</string>
+    <string name="chapter">Chapter</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="ongoing">Ongoing</string>
+    <string name="finished">Finished</string>
+    <string name="manga_non_existent">Manga does not exist</string>
+    <string name="unread_">+%d</string>
+    <string name="add_manga">Add Manga</string>
+    <string name="refresh">Refresh</string>
+    <string name="image">image</string>
+    <string name="glide_load">Glide Load</string>
+    <string name="lazy_load">Lazy Load</string>
+    <string name="prev">Prev</string>
+    <string name="next">Next</string>
+    <string name="error">Error</string>
+    <string name="delete_manga">Delete Manga</string>
+    <string name="alt_title_s">Alt. Title(s)</string>
+    <string name="auto_refresh">Auto Refresh</string>
+    <string name="no_manga_added_yet">No manga added yet…</string>
+
+    <string name="settings">Settings</string>
+
+    <!-- Manga Preferences-->
+    <string name="refresh_summary_on">Automatically refresh a manga when it is opened</string>
+    <string name="refresh_summary_off">Never automatically refresh a manga when opened</string>
+    <string name="auto_refresh_time">Auto Refresh Time</string>
+
+    <!-- Chapter Preferences -->
+    <string name="use_glide_default">Use Glide by Default</string>
+    <string name="_0">0</string>
+    <string name="retry">Retry</string>
+    <string name="progress">Progress</string>
+    <string name="done">Done</string>
+    <string name="no_chapters">No Chapters</string>
+    <string name="last">Last</string>
+    <string name="warning">Warning!</string>
+    <string name="skipping_chapter_warning">You might be skipping some chapters, are you sure you want to start reading the last chapter?</string>
+    <string name="yes">Yes</string>
+    <string name="there_are_no_chapters">There are no chapters</string>
+    <string name="deleted">Deleted!</string>
+    <string name="invalid_url">Not a valid URL!</string>
+    <string name="already_exists">Already exists</string>
+    <string name="lazy_load_default">lazy_load_default</string>
+    <string name="use_lazy_load_default">Use Lazy Load by Default</string>
+    <string name="reset_queries_key">reset_queries</string>
+    <string name="reset_database_key">reset_database</string>
+</resources>

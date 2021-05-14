@@ -1,0 +1,49 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/manga">
+
+        <SwitchPreference
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="@string/auto_refresh"
+            app:summaryOff="@string/refresh_summary_off"
+            app:summaryOn="@string/refresh_summary_on"
+            app:title="@string/auto_refresh" />
+
+        <ListPreference
+            app:defaultValue="1800000"
+            app:dependency="@string/auto_refresh"
+            app:entries="@array/refresh_entries"
+            app:entryValues="@array/refresh_values"
+            app:iconSpaceReserved="false"
+            app:key="@string/auto_refresh_time"
+            app:title="@string/auto_refresh_time"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            android:title="Reset queries"
+            app:iconSpaceReserved="false"
+            app:key="@string/reset_queries_key" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/chapters">
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="MangaDex">
+
+        <Preference
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="@string/lazy_load_default"
+            app:title="Login to MangaDex" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextAppearance.Title2" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/colorSecondary</item>
+    </style>
+
+    <style name="TextAppearance.Title3" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/colorSecondaryVariant</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearance.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+</resources>
