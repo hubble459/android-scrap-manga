@@ -23,6 +23,9 @@
             android:name=".ui.SettingsActivity"
             android:label="@string/settings" />
         <activity
+            android:name=".ui.SearchActivity"
+            android:label="@string/search_online" />
+        <activity
             android:name=".ui.ReadActivity"
             android:hardwareAccelerated="false" />
         <activity

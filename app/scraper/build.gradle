@@ -29,6 +29,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.eclipsesource.j2v8:j2v8_android:3.0.5@aar'
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'org.gaixie.json:json:1.0.0'
     implementation 'io.apisense:rhino-android:1.0'

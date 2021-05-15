@@ -6,9 +6,7 @@ import java.net.URL;
 
 import nl.hubble.scraper.model.Manga;
 
-public class LHTranslation extends Query {
-    private final String[] accepts = new String[]{"lhtranslation"};
-
+public class LHTranslation extends QueryScraper {
     public LHTranslation(Context context) {
         super(context);
     }
@@ -26,13 +24,7 @@ public class LHTranslation extends Query {
     }
 
     @Override
-    public boolean accepts(URL url) {
-        String hostname = url.getHost();
-        for (String accept : accepts) {
-            if (hostname.contains(accept)) {
-                return true;
-            }
-        }
-        return false;
+    public String[] hostnames() {
+        return new String[]{"lhtranslation"};
     }
 }

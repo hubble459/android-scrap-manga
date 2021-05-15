@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MangaStream extends Query {
-    private final String[] accepts = new String[]{"mangastream"};
-
+public class MangaStream extends QueryScraper {
     public MangaStream(Context context) {
         super(context);
     }
@@ -29,13 +27,7 @@ public class MangaStream extends Query {
     }
 
     @Override
-    public boolean accepts(URL url) {
-        String hostname = url.getHost();
-        for (String accept : accepts) {
-            if (hostname.contains(accept)) {
-                return true;
-            }
-        }
-        return false;
+    public String[] hostnames() {
+        return new String[]{"mangastream"};
     }
 }

@@ -18,7 +18,6 @@ import nl.hubble.scraper.model.Manga;
 import nl.hubble.scraper.util.Utils;
 
 public class MangaDex implements BaseScraper {
-    private final String[] accepts = new String[]{"mangadex"};
     private final String[] genres;
     private final Context context;
 
@@ -26,6 +25,11 @@ public class MangaDex implements BaseScraper {
         this.context = context;
         this.genres = new String[86];
         fillGenres();
+    }
+
+    @Override
+    public String[] hostnames() {
+        return new String[]{"mangadex"};
     }
 
     @Override
@@ -127,13 +131,7 @@ public class MangaDex implements BaseScraper {
     }
 
     @Override
-    public boolean accepts(URL url) {
-        String hostname = url.getHost();
-        for (String accept : accepts) {
-            if (hostname.contains(accept)) {
-                return true;
-            }
-        }
+    public boolean canSearch() {
         return false;
     }
 

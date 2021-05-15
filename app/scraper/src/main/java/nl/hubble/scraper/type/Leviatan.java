@@ -13,11 +13,14 @@ import java.util.List;
 
 import nl.hubble.scraper.model.Manga;
 
-public class Leviatan extends Query {
-    private final String[] accepts = new String[]{"leviatan", "the-nonames", "reaperscans", "zeroscans"};
-
+public class Leviatan extends QueryScraper {
     public Leviatan(Context context) {
         super(context);
+    }
+
+    @Override
+    public String[] hostnames() {
+        return new String[]{"leviatan", "the-nonames", "reaperscans", "zeroscans"};
     }
 
     @Override
@@ -55,16 +58,5 @@ public class Leviatan extends Query {
         }
 
         return images;
-    }
-
-    @Override
-    public boolean accepts(URL url) {
-        String hostname = url.getHost();
-        for (String accept : accepts) {
-            if (hostname.contains(accept)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

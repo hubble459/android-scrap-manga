@@ -35,7 +35,7 @@ public class LoadManga extends Thread implements Runnable {
         try {
             listener.finished(ms.parse(url, timeout));
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             listener.error(e);
         }
     }

@@ -10,9 +10,7 @@ import java.util.List;
 
 import nl.hubble.scraper.model.Manga;
 
-public class Webtoon extends Query {
-    private final String[] accepts = new String[]{"webtoon"};
-
+public class Webtoon extends QueryScraper {
     public Webtoon(Context context) {
         super(context);
     }
@@ -36,22 +34,16 @@ public class Webtoon extends Query {
     }
 
     @Override
+    public String[] hostnames() {
+        return new String[]{"webtoon"};
+    }
+
+    @Override
     protected List<String> authors() {
         List<String> authors = super.authors();
         if (!authors.isEmpty()) {
             authors.set(0, authors.get(0).replace(" author info", ""));
         }
         return authors;
-    }
-
-    @Override
-    public boolean accepts(URL url) {
-        String hostname = url.getHost();
-        for (String accept : accepts) {
-            if (hostname.contains(accept)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

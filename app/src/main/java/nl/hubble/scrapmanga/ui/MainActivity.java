@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -485,6 +486,11 @@ public class MainActivity extends CustomActivity {
 
     public void settings(MenuItem item) {
         Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void searchOnline(MenuItem item) {
+        Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
     }
 }

@@ -13,39 +13,41 @@ import nl.hubble.scraper.type.LHTranslation;
 import nl.hubble.scraper.type.Leviatan;
 import nl.hubble.scraper.type.MangaDex;
 import nl.hubble.scraper.type.MangaKakalot;
+import nl.hubble.scraper.type.MangaNelo;
 import nl.hubble.scraper.type.MangaStream;
-import nl.hubble.scraper.type.Query;
+import nl.hubble.scraper.type.MngDoom;
+import nl.hubble.scraper.type.QueryScraper;
 import nl.hubble.scraper.type.Webtoon;
 import nl.hubble.scraper.type.WhimSubs;
 
 /**
  * - MangaSushi
  * - bato.to
- * - fanfox.net
- * - mngdoom.com
  * - niadd.com
  * - mangafreak.net
- * - mangapark.net
  * - mangainn.net
- * - mngdoom.com
  * - honto.jp
  * - holymanga.net
  * - manytoon.com
+ * - mangapark.net <- CLOUDFLARE
+ * - fanfox.net <- CLOUDFLARE
  */
 public class MangaScraper {
+    public static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36";
     private final ArrayList<BaseScraper> scrapers = new ArrayList<>();
-    private final Query queryScraper;
 
     public MangaScraper(Context context) {
-        this.queryScraper = new Query(context);
         scrapers.add(new ArangScans(context));
         scrapers.add(new MangaDex(context));
         scrapers.add(new MangaStream(context));
+        scrapers.add(new MngDoom(context));
         scrapers.add(new Leviatan(context));
         scrapers.add(new LHTranslation(context));
         scrapers.add(new MangaKakalot(context));
+        scrapers.add(new MangaNelo(context));
         scrapers.add(new Webtoon(context));
         scrapers.add(new WhimSubs(context));
+        scrapers.add(new QueryScraper(context));
     }
 
     public Manga parse(URL url, int timeout) throws Exception {
@@ -57,7 +59,7 @@ public class MangaScraper {
             }
         }
         if (manga == null) {
-            manga = queryScraper.parse(url, timeout);
+            throw new Exception(String.format("Website '%s' not supported (yet)", url.getHost()));
         }
         if (manga.getHostname() == null || manga.getHostname().isEmpty()) {
             manga.setHostname(url.getHost());
@@ -75,9 +77,6 @@ public class MangaScraper {
                 images = scraper.images(url, timeout);
                 break;
             }
-        }
-        if (images == null) {
-            images = queryScraper.images(url, timeout);
         }
         return images;
     }
@@ -99,5 +98,15 @@ public class MangaScraper {
 
     public List<String> images(URL url) throws Exception {
         return images(url, 20000);
+    }
+
+    public ArrayList<BaseScraper> getSearchEngines() {
+        ArrayList<BaseScraper> searchEngines = new ArrayList<>();
+        for (BaseScraper scraper : scrapers) {
+            if (scraper.canSearch()) {
+                searchEngines.add(scraper);
+            }
+        }
+        return searchEngines;
     }
 }

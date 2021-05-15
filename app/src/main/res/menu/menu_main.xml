@@ -22,6 +22,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/search_online"
+        android:onClick="searchOnline"
+        android:title="@string/search_online"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/settings"
         android:onClick="settings"
         android:title="@string/settings"

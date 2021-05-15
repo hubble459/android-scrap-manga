@@ -11,11 +11,14 @@ import java.util.List;
 
 import nl.hubble.scraper.util.Utils;
 
-public class WhimSubs extends Query {
-    private final String[] accepts = new String[]{"whimsubs"};
-
+public class WhimSubs extends QueryScraper {
     public WhimSubs(Context context) {
         super(context);
+    }
+
+    @Override
+    public String[] hostnames() {
+        return new String[]{"whimsubs"};
     }
 
     @Override
@@ -29,16 +32,5 @@ public class WhimSubs extends Query {
             images.add(o.getString("href"));
         }
         return images;
-    }
-
-    @Override
-    public boolean accepts(URL url) {
-        String hostname = url.getHost();
-        for (String accept : accepts) {
-            if (hostname.contains(accept)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

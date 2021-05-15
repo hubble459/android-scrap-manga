@@ -6,9 +6,7 @@ import java.net.URL;
 
 import nl.hubble.scraper.model.Manga;
 
-public class MangaKakalot extends Query {
-    private final String[] accepts = new String[]{"mangakakalot"};
-
+public class MangaKakalot extends MangaNelo {
     public MangaKakalot(Context context) {
         super(context);
     }
@@ -16,7 +14,7 @@ public class MangaKakalot extends Query {
     @Override
     public Manga parse(URL url, int timeout) throws Exception {
         Manga manga = super.parse(url, timeout);
-        if (accepts(manga.getHostname())) {
+        if (accepts(manga.getHostname())) { // host could be manganelo
             if (!manga.getAuthors().isEmpty()) {
                 manga.getAuthors().remove(0);
             }
@@ -28,13 +26,12 @@ public class MangaKakalot extends Query {
     }
 
     @Override
-    public boolean accepts(URL url) {
-        String hostname = url.getHost();
-        return accepts(hostname);
+    public String[] hostnames() {
+        return new String[]{"mangakakalot"};
     }
 
     private boolean accepts(String hostname) {
-        for (String accept : accepts) {
+        for (String accept : hostnames()) {
             if (hostname.contains(accept)) {
                 return true;
             }

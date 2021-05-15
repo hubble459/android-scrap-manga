@@ -19,7 +19,10 @@
     "chapter_posted": "span[title]",
     "chapter_posted_attr": "title",
     "chapter_href": "span a",
-    "image": "div.container-chapter-reader img, #vungdoc img"
+    "image": "div.container-chapter-reader img, #vungdoc img",
+    "search_href": "https://mangakakalot.com/search/story/%s",
+    "search_title": "h3.story_name a",
+    "search_image": "div.story_item a img"
   },
   "arangscans": {
     "status": "div.summary-heading:contains(status) + *",
@@ -48,7 +51,10 @@
     "chapter_number": "",
     "chapter_posted": "span.chapter-time",
     "chapter_posted_attr": "title",
-    "chapter_href": "a"
+    "chapter_href": "a",
+    "search_href": "https://manganelo.com/search/story/%s",
+    "search_title": "div.search-story-item div.item-right h3 a.a-h.text-nowrap.item-title",
+    "search_image": "div.search-story-item a.item-img img.img-loading"
   },
   "leviatan": {
     "title": "h5.text-highlight",
@@ -127,19 +133,34 @@
     "image": "#_imageList img",
     "image_attr": "data-url"
   },
-  "fanfox": {
-    "status": "span.detail-info-right-title-tip",
-    "description": "p.detail-info-right-content",
-    "cover": "img.detail-info-cover-img",
-    "title": "span.detail-info-right-title-font",
-    "authors": "p.detail-info-right-say a",
-    "genres": "p.detail-info-right-tag-list",
-    "chapter_row": "#list-1 ul li",
-    "chapter_title": "a div p.title3",
-    "chapter_number": "a div p.title3",
-    "chapter_posted": "a div p.title2",
+  "mngdoom": {
+    "title": "div.content-inner.inner-page h5.widget-heading",
+    "description": "div.note.note-default.margin-top-15 p",
+    "cover": "img.img-responsive.mobile-img",
+    "alternative_titles": "dt:contains(\"Alternative Name:\") + dd",
+    "status": "dt:contains(Status) + dd",
+    "genres": "dt:contains(Categories) + dd",
+    "authors": "dt:contains(Author:) + dd",
+    "chapter_row": "#chapter_list ul.chapter-list li",
+    "chapter_title": "a span.val",
+    "chapter_posted": "a span.date",
+    "chapter_number": "",
     "chapter_href": "a",
-    "image": "#_imageList img",
-    "image_attr": "data-url"
+    "image": "img"
+  },
+  "mangainn": {
+    "title": "div.content-inner.inner-page h5.widget-heading",
+    "description": "div.note.note-default.margin-top-15 p",
+    "cover": "img.img-responsive.mobile-img",
+    "alternative_titles": "dt:contains(\"Alternative Name:\") + dd",
+    "status": "dt:contains(Status) + dd",
+    "genres": "dt:contains(Categories) + dd",
+    "authors": "dt:contains(Author:) + dd",
+    "chapter_row": "#chapter_list ul.chapter-list li",
+    "chapter_title": "a span.val",
+    "chapter_posted": "a span.date",
+    "chapter_number": "",
+    "chapter_href": "a",
+    "image": "img"
   }
 }

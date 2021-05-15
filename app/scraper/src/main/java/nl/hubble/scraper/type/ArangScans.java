@@ -11,9 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArangScans extends Query {
-    private final String[] accepts = new String[]{"arangscans"};
-
+public class ArangScans extends QueryScraper {
     public ArangScans(Context context) {
         super(context);
     }
@@ -35,13 +33,7 @@ public class ArangScans extends Query {
     }
 
     @Override
-    public boolean accepts(URL url) {
-        String hostname = url.getHost();
-        for (String accept : accepts) {
-            if (hostname.contains(accept)) {
-                return true;
-            }
-        }
-        return false;
+    public String[] hostnames() {
+        return new String[]{"arangscans"};
     }
 }
