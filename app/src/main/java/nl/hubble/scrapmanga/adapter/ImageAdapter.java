@@ -13,15 +13,17 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 import nl.hubble.scrapmanga.R;
-import nl.hubble.scrapmanga.util.ScrapUtils;
+import nl.hubble.scrapmanga.util.ImageUtil;
 
 public class ImageAdapter extends ArrayAdapter<String> {
     private final String referer;
-    private final ScrapUtils.ErrorListener errorListener;
+    private final ImageUtil.ErrorListener errorListener;
+    private final boolean local;
 
-    public ImageAdapter(@NonNull Context context, @NonNull List<String> reading, String referer, ScrapUtils.ErrorListener errorListener) {
+    public ImageAdapter(@NonNull Context context, @NonNull List<String> reading, String referer, boolean local, ImageUtil.ErrorListener errorListener) {
         super(context, 0, reading);
         this.referer = referer;
+        this.local = local;
         this.errorListener = errorListener;
     }
 
@@ -36,7 +38,7 @@ public class ImageAdapter extends ArrayAdapter<String> {
 
         String urlString = getItem(position);
 
-        ScrapUtils.Image.loadImage(imageView, urlString, errorListener, referer, false);
+        ImageUtil.loadImage(imageView, urlString, errorListener, referer, local);
 
         return convertView;
     }

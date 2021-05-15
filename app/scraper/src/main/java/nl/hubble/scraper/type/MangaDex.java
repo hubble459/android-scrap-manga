@@ -39,18 +39,18 @@ public class MangaDex implements BaseScraper {
             Manga manga = new Manga();
 
             JSONObject mangaJSON = object.getJSONObject("manga");
-            manga.title = Jsoup.parse(mangaJSON.getString("title")).text();
-            manga.cover = "https://mangadex.org" + mangaJSON.getString("cover_url");
+            manga.setTitle(Jsoup.parse(mangaJSON.getString("title")).text());
+            manga.setCover("https://mangadex.org" + mangaJSON.getString("cover_url"));
 
             String description = mangaJSON.getString("description");
             description = Jsoup.parse(description).wholeText();
-            manga.description = parseDesc(description);
+            manga.setDescription(parseDesc(description));
 
-            manga.updated = mangaJSON.getLong("last_updated") * 1000;
-            manga.status = toStatus(mangaJSON.getInt("status"));
+            manga.setUpdated(mangaJSON.getLong("last_updated") * 1000);
+            manga.setStatus(toStatus(mangaJSON.getInt("status")));
 
             String[] authors = mangaJSON.getString("author").split(", ");
-            manga.authors = Arrays.asList(authors);
+            manga.setAuthors(Arrays.asList(authors));
 
             JSONArray altNames = mangaJSON.getJSONArray("alt_names");
             ArrayList<String> altTitles = new ArrayList<>();
@@ -58,7 +58,7 @@ public class MangaDex implements BaseScraper {
                 String title = altNames.getString(i);
                 altTitles.add(title);
             }
-            manga.altTitles = altTitles;
+            manga.setAltTitles(altTitles);
 
             JSONArray genreNumbers = mangaJSON.getJSONArray("genres");
             ArrayList<String> genreList = new ArrayList<>();
@@ -66,7 +66,7 @@ public class MangaDex implements BaseScraper {
                 String title = genres[genreNumbers.getInt(i)];
                 genreList.add(title);
             }
-            manga.genres = genreList;
+            manga.setGenres(genreList);
 
             JSONObject chaptersObject = object.getJSONObject("chapter");
             ArrayList<Chapter> chapters = new ArrayList<>();
@@ -78,19 +78,19 @@ public class MangaDex implements BaseScraper {
                 String lang = chObject.getString("lang_name").toLowerCase();
                 if (lang.equals("english")) {
                     Chapter chapter = new Chapter();
-                    chapter.number = Utils.Parse.convertToNumber(chObject.getString("chapter"));
+                    chapter.setNumber(Utils.Parse.convertToNumber(chObject.getString("chapter")));
                     String title = chObject.getString("title");
                     if (title.isEmpty()) {
-                        title = "Chapter " + chapter.number;
+                        title = "Chapter " + chapter.getNumber();
                     }
-                    chapter.title = title;
-                    chapter.posted = chObject.getLong("timestamp") * 1000;
-                    chapter.href = "https://mangadex.org/api/?type=chapter&id=" + key;
+                    chapter.setTitle(title);
+                    chapter.setPosted(chObject.getLong("timestamp") * 1000);
+                    chapter.setHref("https://mangadex.org/api/?type=chapter&id=" + key);
 
                     chapters.add(chapter);
                 }
             }
-            manga.chapters = chapters;
+            manga.setChapters(chapters);
             return manga;
         }
 
@@ -98,7 +98,7 @@ public class MangaDex implements BaseScraper {
     }
 
     @Override
-    public List<Manga> search(String query, int timeout) throws Exception {
+    public List<Manga> search(String query, int timeout) {
         return null;
     }
 

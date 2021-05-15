@@ -59,11 +59,11 @@ public class MangaScraper {
         if (manga == null) {
             manga = queryScraper.parse(url, timeout);
         }
-        if (manga.hostname == null || manga.hostname.isEmpty()) {
-            manga.hostname = url.getHost();
+        if (manga.getHostname() == null || manga.getHostname().isEmpty()) {
+            manga.setHostname(url.getHost());
         }
-        if (manga.href == null || manga.href.isEmpty()) {
-            manga.href = url.toString();
+        if (manga.getHref() == null || manga.getHref().isEmpty()) {
+            manga.setHref(url.toString());
         }
         return manga;
     }

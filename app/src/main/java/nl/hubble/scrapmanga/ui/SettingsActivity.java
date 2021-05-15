@@ -16,7 +16,7 @@ import nl.hubble.scraper.util.Utils;
 import nl.hubble.scrapmanga.R;
 import nl.hubble.scrapmanga.model.CustomActivity;
 import nl.hubble.scrapmanga.util.DatabaseHelper;
-import nl.hubble.scrapmanga.util.DownloadTask;
+import nl.hubble.scrapmanga.util.FileUtil;
 
 public class SettingsActivity extends CustomActivity {
 
@@ -51,7 +51,7 @@ public class SettingsActivity extends CustomActivity {
             addListener(R.string.download_database, preference -> {
                 String pathIn = requireContext().getExternalFilesDir(null).getAbsolutePath() + File.separator + "databases" + File.separator + DatabaseHelper.DB_NAME;
                 String pathOut = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + "manga.db";
-                DownloadTask dt = new DownloadTask(pathIn, pathOut, new DownloadTask.DownloadListener() {
+                FileUtil.Copy dt = new FileUtil.Copy(pathIn, pathOut, new FileUtil.DownloadListener() {
                     @Override
                     public void onFinish() {
                         Looper.prepare();
@@ -63,6 +63,11 @@ public class SettingsActivity extends CustomActivity {
                         Looper.prepare();
                         e.printStackTrace();
                         Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void progress(String file, int percent) {
+
                     }
 
                     @Override

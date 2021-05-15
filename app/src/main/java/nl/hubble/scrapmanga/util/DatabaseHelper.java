@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -51,41 +52,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         c.moveToNext();
         if (c.getCount() == 1) {
             reading = new Reading();
-            reading.id = c.getInt(c.getColumnIndex("reading_id"));
-            reading.href = c.getString(c.getColumnIndex("href"));
-            reading.title = c.getString(c.getColumnIndex("title"));
-            reading.hostname = c.getString(c.getColumnIndex("hostname"));
-            reading.totalChapters = c.getInt(c.getColumnIndex("total_chapters"));
-            reading.chapter = c.getInt(c.getColumnIndex("chapter"));
-            reading.refreshed = c.getLong(c.getColumnIndex("refreshed"));
-            reading.autoRefresh = c.getInt(c.getColumnIndex("auto_refresh")) == 1;
+            reading.setId(c.getInt(c.getColumnIndex("reading_id")));
+            reading.setHref(c.getString(c.getColumnIndex("href")));
+            reading.setTitle(c.getString(c.getColumnIndex("title")));
+            reading.setHostname(c.getString(c.getColumnIndex("hostname")));
+            reading.setTotalChapters(c.getInt(c.getColumnIndex("total_chapters")));
+            reading.setChapter(c.getInt(c.getColumnIndex("chapter")));
+            reading.setRefreshed(c.getLong(c.getColumnIndex("refreshed")));
+            reading.setAutoRefresh(c.getInt(c.getColumnIndex("auto_refresh")) == 1);
         }
         c.close();
         return reading;
     }
 
     public static void reset(SQLiteDatabase db, Reading reading) {
-        db.delete("reading", "reading_id IS ?", new String[]{String.valueOf(reading.id)});
+        db.delete("reading", "reading_id IS ?", new String[]{String.valueOf(reading.getId())});
     }
 
-    public static Manga getManga(SQLiteDatabase db, Reading reading) {
+    public static Manga getManga(Context context, SQLiteDatabase db, Reading reading) {
         Manga manga = null;
-        Cursor c = db.rawQuery("SELECT * FROM manga WHERE reading_id IS ?;", new String[]{String.valueOf(reading.id)});
+        Cursor c = db.rawQuery("SELECT * FROM manga WHERE reading_id IS ?;", new String[]{String.valueOf(reading.getId())});
         c.moveToNext();
         if (c.getCount() == 1) {
             manga = new Manga();
-            manga.id = c.getInt(c.getColumnIndex("manga_id"));
-            manga.href = reading.href;
-            manga.title = reading.title;
-            manga.hostname = reading.hostname;
-            manga.authors = Arrays.asList(c.getString(c.getColumnIndex("authors")).split("&;"));
-            manga.genres = Arrays.asList(c.getString(c.getColumnIndex("genres")).split("&;"));
-            manga.altTitles = Arrays.asList(c.getString(c.getColumnIndex("alt_titles")).split("&;"));
-            manga.description = c.getString(c.getColumnIndex("description"));
-            manga.cover = c.getString(c.getColumnIndex("cover_url"));
-            manga.status = c.getInt(c.getColumnIndex("status")) == 1;
-            manga.updated = c.getLong(c.getColumnIndex("updated"));
-            manga.chapters = getChapters(db, manga);
+            manga.setId(c.getInt(c.getColumnIndex("manga_id")));
+            manga.setHref(reading.getHref());
+            manga.setTitle(reading.getTitle());
+            manga.setHostname(reading.getHostname());
+            manga.setAuthors(Arrays.asList(c.getString(c.getColumnIndex("authors")).split("&;")));
+            manga.setGenres(Arrays.asList(c.getString(c.getColumnIndex("genres")).split("&;")));
+            manga.setAltTitles(Arrays.asList(c.getString(c.getColumnIndex("alt_titles")).split("&;")));
+            manga.setDescription(c.getString(c.getColumnIndex("description")));
+            manga.setCover(c.getString(c.getColumnIndex("cover_url")));
+            manga.setStatus(c.getInt(c.getColumnIndex("status")) == 1);
+            manga.setUpdated(c.getLong(c.getColumnIndex("updated")));
+            manga.setChapters(getChapters(context, db, manga));
         }
         c.close();
         return manga;
@@ -100,24 +101,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static void insertManga(SQLiteDatabase db, Reading reading, Manga manga) {
         ContentValues cv = new ContentValues();
-        cv.put("reading_id", reading.id);
-        cv.put("description", manga.description);
-        cv.put("authors", listAsString(manga.authors));
-        cv.put("genres", listAsString(manga.genres));
-        cv.put("alt_titles", listAsString(manga.altTitles));
-        cv.put("cover_url", manga.cover);
-        cv.put("status", manga.status ? 1 : 0);
-        cv.put("updated", manga.updated);
-        manga.id = db.insert("manga", null, cv);
+        cv.put("reading_id", reading.getId());
+        cv.put("description", manga.getDescription());
+        cv.put("authors", listAsString(manga.getAuthors()));
+        cv.put("genres", listAsString(manga.getGenres()));
+        cv.put("alt_titles", listAsString(manga.getAltTitles()));
+        cv.put("cover_url", manga.getCover());
+        cv.put("status", manga.isStatus() ? 1 : 0);
+        cv.put("updated", manga.getUpdated());
+        manga.setId(db.insert("manga", null, cv));
 
-        for (Chapter chapter : manga.chapters) {
+        for (Chapter chapter : manga.getChapters()) {
             cv = new ContentValues();
-            cv.put("manga_id", manga.id);
-            cv.put("title", chapter.title);
-            cv.put("href", chapter.href);
-            cv.put("number", chapter.number);
-            cv.put("posted", chapter.posted);
-            chapter.id = db.insert("chapters", null, cv);
+            cv.put("manga_id", manga.getId());
+            cv.put("title", chapter.getTitle());
+            cv.put("href", chapter.getHref());
+            cv.put("number", chapter.getNumber());
+            cv.put("posted", chapter.getPosted());
+            chapter.setId(db.insert("chapters", null, cv));
         }
     }
 
@@ -134,66 +135,69 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static void updateManga(SQLiteDatabase db, Manga manga) {
         ContentValues cv = new ContentValues();
-        cv.put("description", manga.description);
-        cv.put("authors", listAsString(manga.authors));
-        cv.put("genres", listAsString(manga.genres));
-        cv.put("alt_titles", listAsString(manga.altTitles));
-        cv.put("cover_url", manga.cover);
-        cv.put("status", manga.status ? 1 : 0);
-        cv.put("updated", manga.updated);
-        db.update("manga", cv, "manga_id IS ?", new String[]{String.valueOf(manga.id)});
+        cv.put("description", manga.getDescription());
+        cv.put("authors", listAsString(manga.getAuthors()));
+        cv.put("genres", listAsString(manga.getGenres()));
+        cv.put("alt_titles", listAsString(manga.getAltTitles()));
+        cv.put("cover_url", manga.getCover());
+        cv.put("status", manga.isStatus() ? 1 : 0);
+        cv.put("updated", manga.getUpdated());
+        db.update("manga", cv, "manga_id IS ?", new String[]{String.valueOf(manga.getId())});
 
-        db.delete("chapters", "manga_id IS ?", new String[]{String.valueOf(manga.id)});
-        for (Chapter chapter : manga.chapters) {
+        db.delete("chapters", "manga_id IS ?", new String[]{String.valueOf(manga.getId())});
+        for (Chapter chapter : manga.getChapters()) {
             cv = new ContentValues();
-            cv.put("manga_id", manga.id);
-            cv.put("title", chapter.title);
-            cv.put("href", chapter.href);
-            cv.put("number", chapter.number);
-            cv.put("posted", chapter.posted);
-            chapter.id = db.insert("chapters", null, cv);
+            cv.put("manga_id", manga.getId());
+            cv.put("title", chapter.getTitle());
+            cv.put("href", chapter.getHref());
+            cv.put("number", chapter.getNumber());
+            cv.put("posted", chapter.getPosted());
+            chapter.setId(db.insert("chapters", null, cv));
         }
     }
 
     public static void updateManga(SQLiteDatabase db, Manga manga, Reading reading) {
         ContentValues cv = new ContentValues();
-        cv.put("description", manga.description);
-        cv.put("authors", listAsString(manga.authors));
-        cv.put("genres", listAsString(manga.genres));
-        cv.put("alt_titles", listAsString(manga.altTitles));
-        cv.put("cover_url", manga.cover);
-        cv.put("status", manga.status ? 1 : 0);
-        cv.put("updated", manga.updated);
-        db.update("manga", cv, "reading_id IS ?", new String[]{String.valueOf(reading.id)});
+        cv.put("description", manga.getDescription());
+        cv.put("authors", listAsString(manga.getAuthors()));
+        cv.put("genres", listAsString(manga.getGenres()));
+        cv.put("alt_titles", listAsString(manga.getAltTitles()));
+        cv.put("cover_url", manga.getCover());
+        cv.put("status", manga.isStatus() ? 1 : 0);
+        cv.put("updated", manga.getUpdated());
+        db.update("manga", cv, "reading_id IS ?", new String[]{String.valueOf(reading.getId())});
 
-        db.delete("chapters", "manga_id IS ?", new String[]{String.valueOf(manga.id)});
-        for (Chapter chapter : manga.chapters) {
+        db.delete("chapters", "manga_id IS ?", new String[]{String.valueOf(manga.getId())});
+        for (Chapter chapter : manga.getChapters()) {
             cv = new ContentValues();
-            cv.put("manga_id", manga.id);
-            cv.put("title", chapter.title);
-            cv.put("href", chapter.href);
-            cv.put("number", chapter.number);
-            cv.put("posted", chapter.posted);
-            chapter.id = db.insert("chapters", null, cv);
+            cv.put("manga_id", manga.getId());
+            cv.put("title", chapter.getTitle());
+            cv.put("href", chapter.getHref());
+            cv.put("number", chapter.getNumber());
+            cv.put("posted", chapter.getPosted());
+            chapter.setId(db.insert("chapters", null, cv));
         }
     }
 
-    public static List<Chapter> getChapters(SQLiteDatabase db, Manga manga) {
+    public static List<Chapter> getChapters(Context context, SQLiteDatabase db, Manga manga) {
         List<Chapter> list = new ArrayList<>();
-        Cursor c = db.rawQuery("SELECT * FROM chapters WHERE manga_id IS ?", new String[]{String.valueOf(manga.id)});
+        Cursor c = db.rawQuery("SELECT * FROM chapters WHERE manga_id IS ?", new String[]{String.valueOf(manga.getId())});
         int chapter_id = c.getColumnIndex("chapter_id");
         int title = c.getColumnIndex("title");
         int href = c.getColumnIndex("href");
         int number = c.getColumnIndex("number");
         int posted = c.getColumnIndex("posted");
 
+        String basePath = context.getExternalFilesDir(null).getAbsolutePath() + File.separator + "chapters" + File.separator;
+
         while (c.moveToNext()) {
             Chapter chapter = new Chapter();
-            chapter.id = c.getInt(chapter_id);
-            chapter.title = c.getString(title);
-            chapter.href = c.getString(href);
-            chapter.number = c.getInt(number);
-            chapter.posted = c.getLong(posted);
+            chapter.setId(c.getInt(chapter_id));
+            chapter.setTitle(c.getString(title));
+            chapter.setHref(c.getString(href));
+            chapter.setNumber(c.getInt(number));
+            chapter.setPosted(c.getLong(posted));
+            chapter.setDownloaded(FileUtil.exists(basePath + chapter.getId()));
             list.add(chapter);
         }
         c.close();
@@ -214,14 +218,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Reading> list = new ArrayList<>();
         while (cursor.moveToNext()) {
             Reading r = new Reading();
-            r.id = cursor.getInt(idIndex);
-            r.href = cursor.getString(hrefIndex);
-            r.title = cursor.getString(titleIndex);
-            r.hostname = cursor.getString(hostIndex);
-            r.totalChapters = cursor.getInt(totalIndex);
-            r.chapter = cursor.getInt(chapterIndex);
-            r.refreshed = cursor.getLong(refreshedIndex);
-            r.autoRefresh = cursor.getInt(autoRIndex) == 1;
+            r.setId(cursor.getInt(idIndex));
+            r.setHref(cursor.getString(hrefIndex));
+            r.setTitle(cursor.getString(titleIndex));
+            r.setHostname(cursor.getString(hostIndex));
+            r.setTotalChapters(cursor.getInt(totalIndex));
+            r.setChapter(cursor.getInt(chapterIndex));
+            r.setRefreshed(cursor.getLong(refreshedIndex));
+            r.setAutoRefresh(cursor.getInt(autoRIndex) == 1);
             list.add(r);
         }
         cursor.close();
@@ -230,23 +234,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static void insertReading(SQLiteDatabase db, Reading reading) {
         ContentValues cv = new ContentValues();
-        cv.put("href", reading.href);
-        cv.put("title", reading.title);
-        cv.put("hostname", reading.hostname);
-        cv.put("total_chapters", reading.totalChapters);
-        cv.put("chapter", reading.chapter);
-        cv.put("refreshed", reading.refreshed = System.currentTimeMillis());
-        reading.id = db.insert("reading", null, cv);
+        cv.put("href", reading.getHref());
+        cv.put("title", reading.getTitle());
+        cv.put("hostname", reading.getHostname());
+        cv.put("total_chapters", reading.getTotalChapters());
+        cv.put("chapter", reading.getChapter());
+        reading.setRefreshed(System.currentTimeMillis());
+        cv.put("refreshed", reading.getRefreshed());
+        reading.setId(db.insert("reading", null, cv));
     }
 
     public static void updateReading(SQLiteDatabase db, Reading reading) {
         ContentValues cv = new ContentValues();
-        cv.put("title", reading.title);
-        cv.put("hostname", reading.hostname);
-        cv.put("chapter", reading.chapter);
-        cv.put("total_chapters", reading.totalChapters);
-        cv.put("refreshed", reading.refreshed);
-        db.update("reading", cv, "href IS ?", new String[]{reading.href});
+        cv.put("title", reading.getTitle());
+        cv.put("hostname", reading.getHostname());
+        cv.put("chapter", reading.getChapter());
+        cv.put("total_chapters", reading.getTotalChapters());
+        cv.put("refreshed", reading.getRefreshed());
+        db.update("reading", cv, "href IS ?", new String[]{reading.getHref()});
     }
 
     @Override

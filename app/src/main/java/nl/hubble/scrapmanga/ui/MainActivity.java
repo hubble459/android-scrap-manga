@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -107,12 +106,12 @@ public class MainActivity extends CustomActivity {
     private void deleteManga(Reading reading) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Manga")
-                .setMessage(String.format("Are you sure you want to remove '%s' ?", reading.title))
+                .setMessage(String.format("Are you sure you want to remove '%s' ?", reading.getTitle()))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     load(true);
                     DatabaseHelper.reset(db, reading);
                     reloadReading();
-                    Toast.makeText(this, String.format("Removed '%s'", reading.title), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, String.format("Removed '%s'", reading.getTitle()), Toast.LENGTH_SHORT).show();
                     load(false);
                 })
                 .setNegativeButton(R.string.cancel, null)
@@ -136,7 +135,7 @@ public class MainActivity extends CustomActivity {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < readingList.size(); i++) {
                 Reading reading = readingList.get(i);
-                sb.append(reading.href);
+                sb.append(reading.getHref());
                 if (i < readingList.size() - 1) {
                     sb.append('\n');
                 }
@@ -328,11 +327,11 @@ public class MainActivity extends CustomActivity {
     private synchronized Reading addReadingAndManga(Manga manga) {
         Reading reading = new Reading();
 
-        reading.totalChapters = manga.chapters.size();
-        reading.title = manga.title;
-        reading.href = manga.href;
-        reading.hostname = manga.hostname;
-        reading.autoRefresh = true;
+        reading.setTotalChapters(manga.getChapters().size());
+        reading.setTitle(manga.getTitle());
+        reading.setHref(manga.getHref());
+        reading.setHostname(manga.getHostname());
+        reading.setAutoRefresh(true);
 
         DatabaseHelper.insertReading(db, reading);
         DatabaseHelper.insertManga(db, reading, manga);
@@ -340,7 +339,7 @@ public class MainActivity extends CustomActivity {
     }
 
     private void openManga(Reading reading) {
-        Intent intent = new Intent(this, ChapterActivity.class);
+        Intent intent = new Intent(this, MangaActivity.class);
         intent.putExtra(READING_KEY, reading);
         startActivity(intent);
     }
@@ -369,7 +368,7 @@ public class MainActivity extends CustomActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem darkModeToggle = menu.findItem(R.id.dark_mode);
         darkModeToggle.setChecked(isNightModeEnabled());
         return super.onCreateOptionsMenu(menu);
@@ -417,18 +416,18 @@ public class MainActivity extends CustomActivity {
 
         long now = System.currentTimeMillis();
         for (Reading reading : readingList) {
-            if (reading.totalChapters - reading.chapter <= 3 && now - reading.refreshed > 10 * 60 * 1000 /*10 min*/) {
+            if (reading.getTotalChapters() - reading.getChapter() <= 3 && now - reading.getRefreshed() > 10 * 60 * 1000 /*10 min*/) {
                 Thread t = new Thread(() -> {
                     try {
                         MangaScraper ms = new MangaScraper(this);
-                        Manga manga = ms.parse(new URL(reading.href));
+                        Manga manga = ms.parse(new URL(reading.getHref()));
                         if (!isComplete(manga)) {
                             throw new Exception("Manga is missing important data");
                         } else {
                             update(reading, manga);
                         }
                     } catch (Exception e) {
-                        runOnUiThread(() -> ld.addError(reading.title, e.getMessage(), reading));
+                        runOnUiThread(() -> ld.addError(reading.getTitle(), e.getMessage(), reading));
                     }
                     runOnUiThread(ld::increaseCount);
                 });
@@ -457,7 +456,7 @@ public class MainActivity extends CustomActivity {
     }
 
     private boolean isComplete(Manga manga) {
-        return filled(manga.title) && filled(manga.href) && filled(manga.hostname);
+        return filled(manga.getTitle()) && filled(manga.getHref()) && filled(manga.getHostname());
     }
 
     private boolean filled(Object object) {
@@ -475,13 +474,13 @@ public class MainActivity extends CustomActivity {
 
     private synchronized void update(Reading reading, Manga manga) {
         ContentValues cv = new ContentValues();
-        cv.put("title", manga.title);
-        cv.put("href", manga.href);
-        cv.put("total_chapters", manga.chapters.size());
+        cv.put("title", manga.getTitle());
+        cv.put("href", manga.getHref());
+        cv.put("total_chapters", manga.getChapters().size());
 
         DatabaseHelper.updateManga(db, manga, reading);
 
-        db.update("reading", cv, "href IS ?", new String[]{reading.href});
+        db.update("reading", cv, "href IS ?", new String[]{reading.getHref()});
     }
 
     public void settings(MenuItem item) {

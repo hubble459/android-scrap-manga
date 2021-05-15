@@ -16,12 +16,12 @@ public class MangaKakalot extends Query {
     @Override
     public Manga parse(URL url, int timeout) throws Exception {
         Manga manga = super.parse(url, timeout);
-        if (accepts(manga.hostname)) {
-            if (!manga.authors.isEmpty()) {
-                manga.authors.remove(0);
+        if (accepts(manga.getHostname())) {
+            if (!manga.getAuthors().isEmpty()) {
+                manga.getAuthors().remove(0);
             }
-            if (!manga.altTitles.isEmpty()) {
-                manga.altTitles.remove(0);
+            if (!manga.getAltTitles().isEmpty()) {
+                manga.getAltTitles().remove(0);
             }
         }
         return manga;

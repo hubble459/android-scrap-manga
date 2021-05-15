@@ -404,25 +404,25 @@ public class Query implements BaseScraper {
             url = new URL(doc.location());
         } catch (MalformedURLException ignored) {
         }
-        manga.hostname = url.getHost();
-        manga.href = url.toString();
+        manga.setHostname(url.getHost());
+        manga.setHref(url.toString());
 
-        initQueries(manga.hostname);
+        initQueries(manga.getHostname());
 
-        manga.title = title();
-        manga.status = status();
-        manga.description = description();
-        manga.cover = cover();
-        manga.authors = authors();
-        manga.altTitles = altTitles(manga.title);
-        manga.genres = genres();
-        manga.chapters = chapters();
+        manga.setTitle(title());
+        manga.setStatus(status());
+        manga.setDescription(description());
+        manga.setCover(cover());
+        manga.setAuthors(authors());
+        manga.setAltTitles(altTitles(manga.getTitle()));
+        manga.setGenres(genres());
+        manga.setChapters(chapters());
 
         return manga;
     }
 
     @Override
-    public List<Manga> search(String query, int timeout) throws Exception {
+    public List<Manga> search(String query, int timeout) {
         return null;
     }
 
@@ -598,23 +598,23 @@ public class Query implements BaseScraper {
                     Chapter chapter = new Chapter();
                     Element title = chapElement.selectFirst(chapterTitleQuery);
                     if (title != null) {
-                        chapter.title = title.ownText();
+                        chapter.setTitle(title.ownText());
                     } else {
                         continue;
                     }
-                    chapter.number = -1;
+                    chapter.setNumber(-1);
                     if (!chapterNumberQuery.isEmpty()) {
-                        chapter.number = convertToNumber(chapElement.selectFirst(chapterNumberQuery));
+                        chapter.setNumber(convertToNumber(chapElement.selectFirst(chapterNumberQuery)));
                     }
-                    if (chapter.number == -1) {
-                        chapter.number = Utils.Parse.convertToNumber(chapter.title);
+                    if (chapter.getNumber() == -1) {
+                        chapter.setNumber(Utils.Parse.convertToNumber(chapter.getTitle()));
                     }
                     if (!chapterPostedQuery.isEmpty()) {
-                        chapter.posted = toTime(chapElement.selectFirst(chapterPostedQuery));
+                        chapter.setPosted(toTime(chapElement.selectFirst(chapterPostedQuery)));
                     } else {
-                        chapter.posted = -1;
+                        chapter.setPosted(-1);
                     }
-                    chapter.href = chapElement.selectFirst(chapterHrefQuery).absUrl("href");
+                    chapter.setHref(chapElement.selectFirst(chapterHrefQuery).absUrl("href"));
                     chapters.add(chapter);
                 }
             }

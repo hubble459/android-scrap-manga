@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +23,11 @@ import java.util.List;
 import nl.hubble.scrapmanga.R;
 
 public class LoadDialog extends AlertDialog.Builder {
+    private final int max;
+    private final String progressCount;
     private final ProgressBar pb;
     private final TextView count;
+    private final TextView currentTask;
     private final AlertDialog ad;
     private final List<Error> errors;
     private final Adapter adapter;
@@ -31,6 +35,8 @@ public class LoadDialog extends AlertDialog.Builder {
 
     public LoadDialog(Context context, int max, DialogInterface.OnCancelListener listener, OnRetryListener retryListener) {
         super(context);
+        this.progressCount = context.getString(R.string.progress_count);
+        this.max = max;
 
         errors = new ArrayList<>();
 
@@ -41,7 +47,8 @@ public class LoadDialog extends AlertDialog.Builder {
         lv.setAdapter(adapter = new Adapter(getContext(), errors));
         pb = view.findViewById(R.id.progress_bar);
         count = view.findViewById(R.id.count);
-
+        count.setText(String.format(progressCount, 0, max));
+        currentTask = view.findViewById(R.id.current_task);
         pb.setMax(max);
         pb.setProgress(0);
 
@@ -60,12 +67,19 @@ public class LoadDialog extends AlertDialog.Builder {
 
     public synchronized void increaseCount() {
         pb.incrementProgressBy(1);
-        count.setText(String.valueOf(pb.getProgress()));
+        count.setText(String.format(progressCount, pb.getProgress(), max));
+        if (pb.getProgress() == max) {
+            done();
+        }
     }
 
     public synchronized void addError(String title, String message, Object tag) {
         errors.add(0, new Error(title, message, tag));
         adapter.notifyDataSetChanged();
+    }
+
+    public synchronized void setCurrentTask(String text) {
+        this.currentTask.setText(text);
     }
 
     public synchronized void done() {

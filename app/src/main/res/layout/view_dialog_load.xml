@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -9,8 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingBottom="8dp">
+        android:orientation="horizontal">
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -27,8 +27,15 @@
             android:paddingLeft="16dp"
             android:paddingEnd="0dp"
             android:paddingRight="0dp"
-            android:text="@string/_0" />
+            android:text="@string/_0_0" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/current_task"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        tools:text="Downloading image 10" />
 
     <ListView
         android:id="@+id/error_list"

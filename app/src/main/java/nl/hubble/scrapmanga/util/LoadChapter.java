@@ -14,17 +14,17 @@ public class LoadChapter extends Thread implements Runnable {
     private final OnFinishedListener listener;
     private final int timeout;
 
-    public LoadChapter(Context context, String href, OnFinishedListener listener) throws MalformedURLException {
-        this(new MangaScraper(context), href, listener);
+    public LoadChapter(Context context, URL url, OnFinishedListener listener) {
+        this(new MangaScraper(context), url, listener);
     }
 
-    public LoadChapter(MangaScraper ms, String href, OnFinishedListener listener) throws MalformedURLException {
-        this(ms, href, listener, 20000);
+    public LoadChapter(MangaScraper ms, URL url, OnFinishedListener listener) {
+        this(ms, url, listener, 20000);
     }
 
-    public LoadChapter(MangaScraper ms, String href, OnFinishedListener listener, int timeout) throws MalformedURLException {
+    public LoadChapter(MangaScraper ms, URL url, OnFinishedListener listener, int timeout) {
         this.ms = ms;
-        this.url = new URL(href);
+        this.url = url;
         this.listener = listener;
         this.timeout = timeout;
         new Thread(this).start();

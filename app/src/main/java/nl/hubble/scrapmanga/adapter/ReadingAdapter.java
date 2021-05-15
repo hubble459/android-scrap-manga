@@ -37,13 +37,13 @@ public class ReadingAdapter extends ArrayAdapter<Reading> {
         Reading reading = getItem(position);
 
         TextView title = convertView.findViewById(R.id.title);
-        title.setText(reading.title);
+        title.setText(reading.getTitle());
 
         TextView hostname = convertView.findViewById(R.id.hostname);
-        hostname.setText(reading.hostname);
+        hostname.setText(reading.getHostname());
 
         TextView unread = convertView.findViewById(R.id.unread);
-        int diff = reading.totalChapters - reading.chapter;
+        int diff = reading.getTotalChapters() - reading.getChapter();
         if (diff > 0) {
             unread.setText(String.format(Locale.UK, getContext().getString(R.string.unread_), diff));
             convertView.setBackgroundColor(Color.TRANSPARENT);
@@ -53,8 +53,8 @@ public class ReadingAdapter extends ArrayAdapter<Reading> {
         }
 
         ProgressBar pb = convertView.findViewById(R.id.progress);
-        pb.setMax(reading.totalChapters);
-        pb.setProgress(reading.chapter);
+        pb.setMax(reading.getTotalChapters());
+        pb.setProgress(reading.getChapter());
 
         return convertView;
     }

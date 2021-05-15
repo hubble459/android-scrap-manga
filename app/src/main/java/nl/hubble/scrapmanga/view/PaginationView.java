@@ -49,16 +49,16 @@ public class PaginationView extends LinearLayout {
         next.setOnClickListener(v -> {
             if (reading == null || manga == null || listener == null) return;
 
-            int chapter_ = Math.min(reading.chapter + 1, reading.totalChapters);
-            int chap = reading.totalChapters - chapter_;
+            int chapter_ = Math.min(reading.getChapter() + 1, reading.getTotalChapters());
+            int chap = reading.getTotalChapters() - chapter_;
             chapterSpinner.setSelection(chap);
         });
 
         prev.setOnClickListener(v -> {
             if (reading == null || manga == null || listener == null) return;
 
-            int chapter_ = Math.max(reading.chapter - 1, 1);
-            int chap = reading.totalChapters - chapter_;
+            int chapter_ = Math.max(reading.getChapter() - 1, 1);
+            int chap = reading.getTotalChapters() - chapter_;
             chapterSpinner.setSelection(chap);
         });
 
@@ -67,12 +67,12 @@ public class PaginationView extends LinearLayout {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (reading == null || manga == null || listener == null) return;
 
-                int chap = reading.totalChapters - position;
-                if (chap != reading.chapter) {
-                    reading.chapter = chap;
+                int chap = reading.getTotalChapters() - position;
+                if (chap != reading.getChapter()) {
+                    reading.setChapter(chap);
                     DatabaseHelper.updateReading(db, reading);
 
-                    Chapter chapter = manga.chapters.get(position);
+                    Chapter chapter = manga.getChapters().get(position);
                     listener.reload(chapter);
 
                     refreshEnabled();
@@ -90,11 +90,11 @@ public class PaginationView extends LinearLayout {
     public void init(PaginationListener listener, Manga manga, Reading reading) {
         if (this.listener == null) {
             List<String> chapters = new ArrayList<>();
-            for (Chapter chapter : manga.chapters) {
-                chapters.add(chapter.title);
+            for (Chapter chapter : manga.getChapters()) {
+                chapters.add(chapter.getTitle());
             }
             chapterSpinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, chapters));
-            chapterSpinner.setSelection(reading.totalChapters - reading.chapter);
+            chapterSpinner.setSelection(reading.getTotalChapters() - reading.getChapter());
         }
 
         this.reading = reading;
@@ -106,8 +106,8 @@ public class PaginationView extends LinearLayout {
 
     private void refreshEnabled() {
         if (reading != null) {
-            prev.setEnabled(reading.chapter != 1);
-            next.setEnabled(reading.chapter != reading.totalChapters);
+            prev.setEnabled(reading.getChapter() != 1);
+            next.setEnabled(reading.getChapter() != reading.getTotalChapters());
         }
     }
 

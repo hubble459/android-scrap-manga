@@ -23,10 +23,10 @@ public class Leviatan extends Query {
     @Override
     public Manga parse(URL url, int timeout) throws Exception {
         Manga manga = super.parse(url, timeout);
-        if (!manga.cover.isEmpty()) {
-            manga.cover = manga.cover.substring(21).replace(")", "");
-            if (!manga.cover.contains(url.getHost())) {
-                manga.cover = url.getProtocol() + "://" + url.getHost() + manga.cover;
+        if (!manga.getCover().isEmpty()) {
+            manga.setCover(manga.getCover().substring(21).replace(")", ""));
+            if (!manga.getCover().contains(url.getHost())) {
+                manga.setCover(url.getProtocol() + "://" + url.getHost() + manga.getCover());
             }
         }
 

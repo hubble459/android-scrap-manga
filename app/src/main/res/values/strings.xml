@@ -43,7 +43,7 @@
 
     <!-- Chapter Preferences -->
     <string name="use_glide_default">Use Glide by Default</string>
-    <string name="_0">0</string>
+    <string name="_0_0">0/0</string>
     <string name="retry">Retry</string>
     <string name="progress">Progress</string>
     <string name="done">Done</string>
@@ -61,4 +61,7 @@
     <string name="reset_queries_key">reset_queries</string>
     <string name="reset_database_key">reset_database</string>
     <string name="download_database">Download Database</string>
+    <string name="download_manga">Download</string>
+    <string name="progress_count">%d/%d</string>
+    <string name="select_all">Select</string>
 </resources>

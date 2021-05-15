@@ -29,7 +29,7 @@
             android:name=".ui.ChapterListActivity"
             android:label="@string/chapters" />
         <activity
-            android:name=".ui.ChapterActivity"
+            android:name=".ui.MangaActivity"
             android:label="@string/manga"
             android:parentActivityName=".ui.MainActivity" />
         <activity android:name=".ui.MainActivity">

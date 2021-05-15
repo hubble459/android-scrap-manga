@@ -16,11 +16,11 @@ public class LHTranslation extends Query {
     @Override
     public Manga parse(URL url, int timeout) throws Exception {
         Manga manga = super.parse(url, timeout);
-        if (!manga.authors.isEmpty()) {
-            manga.authors.set(0, manga.authors.get(0).replace("Author(s): ", ""));
+        if (!manga.getAuthors().isEmpty()) {
+            manga.getAuthors().set(0, manga.getAuthors().get(0).replace("Author(s): ", ""));
         }
-        if (!manga.altTitles.isEmpty()) {
-            manga.altTitles.set(0, manga.altTitles.get(0).replace("Other names: ", ""));
+        if (!manga.getAltTitles().isEmpty()) {
+            manga.getAltTitles().set(0, manga.getAltTitles().get(0).replace("Other names: ", ""));
         }
         return manga;
     }

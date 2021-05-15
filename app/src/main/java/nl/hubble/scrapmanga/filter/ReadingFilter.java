@@ -33,7 +33,7 @@ public class ReadingFilter extends Filter {
             ArrayList<Reading> newValues = new ArrayList<>();
 
             for (Reading value : original) {
-                String valueText = value.title.toLowerCase() + ' ' + value.hostname.toLowerCase();
+                String valueText = value.getTitle().toLowerCase() + ' ' + value.getHostname().toLowerCase();
 
                 // First match against the whole, non-splitted value
                 if (matches(valueText, constraintString)) {
@@ -42,7 +42,7 @@ public class ReadingFilter extends Filter {
                     String[] words = constraintString.split(" ");
                     for (String word : words) {
                         if (("unread".contains(word) || word.contains("unread"))
-                                && value.totalChapters - value.chapter > 0) {
+                                && value.getTotalChapters() - value.getChapter() > 0) {
                             newValues.add(value);
                             break;
                         }
