@@ -81,12 +81,17 @@ public class MangaScraper {
         return images;
     }
 
-    public List<Manga> search(String query, int timeout) throws Exception {
+    public List<Manga> search(String hostname, String query, int timeout) throws Exception {
         List<Manga> results = new ArrayList<>();
         for (BaseScraper scraper : scrapers) {
-            List<Manga> res = scraper.search(query, timeout);
-            if (res != null) {
-                results.addAll(res);
+            if (scraper.accepts(hostname) || hostname == null) {
+                List<Manga> res = scraper.search(hostname, query, timeout);
+                if (res != null) {
+                    results.addAll(res);
+                }
+                if (hostname != null) {
+                    break;
+                }
             }
         }
         return results;
@@ -108,5 +113,27 @@ public class MangaScraper {
             }
         }
         return searchEngines;
+    }
+
+    public ArrayList<String> getSearchEnginesNames() {
+        ArrayList<String> searchEngineNames = new ArrayList<>();
+        ArrayList<BaseScraper> searchEngines = getSearchEngines();
+        for (BaseScraper searchEngine : searchEngines) {
+            if (searchEngine instanceof QueryScraper) {
+                ArrayList<String> searchableHostnames = ((QueryScraper) searchEngine).searchableHostnames();
+                for (String shn : searchableHostnames) {
+                    if (!searchEngineNames.contains(shn)) {
+                        searchEngineNames.add(shn);
+                    }
+                }
+            } else {
+                for (String hostname : searchEngine.hostnames()) {
+                    if (!searchEngineNames.contains(hostname)) {
+                        searchEngineNames.add(hostname);
+                    }
+                }
+            }
+        }
+        return searchEngineNames;
     }
 }

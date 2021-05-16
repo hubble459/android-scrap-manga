@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+
+import nl.hubble.scraper.MangaScraper;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -113,9 +116,17 @@ public class Utils {
         }
 
         public static JSONObject getJSON(URL url, int timeout) throws IOException, JSONException {
+            return getJSON(url, timeout, "https://google.com/");
+        }
+
+        public static JSONObject getJSON(URL url, int timeout, String referer) throws IOException, JSONException {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(timeout);
             conn.setRequestMethod("GET");
+            if (referer != null && !referer.isEmpty()) {
+                conn.addRequestProperty("Referer", referer);
+            }
+            conn.addRequestProperty("User-Agent", MangaScraper.USER_AGENT);
             conn.setRequestProperty("Content-Type", "application/json");
             int responseCode = conn.getResponseCode();
 
@@ -125,7 +136,11 @@ public class Utils {
                 while (scanner.hasNextLine()) {
                     sb.append(scanner.nextLine());
                 }
-                return new JSONObject(sb.toString());
+                try {
+                    return new JSONObject(sb.toString());
+                } catch (JSONException e) {
+                    return new JSONArray(sb.toString()).getJSONObject(0);
+                }
             } else {
                 throw new IOException("Got response code: " + responseCode);
             }

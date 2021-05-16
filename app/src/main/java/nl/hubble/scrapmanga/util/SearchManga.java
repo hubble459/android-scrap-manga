@@ -2,17 +2,19 @@ package nl.hubble.scrapmanga.util;
 
 import java.util.List;
 
+import nl.hubble.scraper.MangaScraper;
 import nl.hubble.scraper.model.Manga;
-import nl.hubble.scraper.type.BaseScraper;
 
 public class SearchManga extends Thread implements Runnable {
-    private final BaseScraper scraper;
+    private final MangaScraper scraper;
+    private final String hostname;
     private final String query;
     private final OnFinishedListener listener;
 
-    public SearchManga(BaseScraper scraper, String query, OnFinishedListener listener) {
+    public SearchManga(MangaScraper scraper, String hostname, String query, OnFinishedListener listener) {
         this.scraper = scraper;
-        this.query = scraper.refactorQuery(query);
+        this.hostname = hostname;
+        this.query = query;
         this.listener = listener;
         new Thread(this).start();
     }
@@ -20,7 +22,7 @@ public class SearchManga extends Thread implements Runnable {
     @Override
     public void run() {
         try {
-            listener.finished(scraper.search(query, 20000));
+            listener.finished(scraper.search(hostname, query, 20000));
         } catch (Exception e) {
             e.printStackTrace();
             listener.error(e);

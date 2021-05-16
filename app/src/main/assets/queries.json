@@ -9,7 +9,6 @@
     "status": "li:containsOwn(status)",
     "description": "div:has(> h2:contains(sum))",
     "cover": "div[class^=manga] img",
-    "cover_attr": "src",
     "authors": "li:containsOwn(author)",
     "alternative_titles": "h2:containsOwn(alt), h2.story-alternative",
     "genres": "li:containsOwn(genre)",
@@ -21,6 +20,7 @@
     "chapter_href": "span a",
     "image": "div.container-chapter-reader img, #vungdoc img",
     "search_href": "https://mangakakalot.com/search/story/%s",
+    "search_link": "h3.story_name a",
     "search_title": "h3.story_name a",
     "search_image": "div.story_item a img"
   },
@@ -39,10 +39,10 @@
     "chapter_href": "a"
   },
   "manganelo": {
+    "inherits": "mangakakalot",
     "status": "td:containsOwn(status) + *",
     "description": "div:has(> h3:contains(desc))",
-    "cover": "span[class*=image] img",
-    "cover_attr": "src",
+    "cover": "span.info-image img.img-loading",
     "authors": "td:containsOwn(author) + *",
     "alternative_titles": "td:containsOwn(alt) + *",
     "genres": "td:containsOwn(genre) + *",
@@ -53,8 +53,23 @@
     "chapter_posted_attr": "title",
     "chapter_href": "a",
     "search_href": "https://manganelo.com/search/story/%s",
+    "search_link": "div.search-story-item div.item-right h3 a.a-h.text-nowrap.item-title",
     "search_title": "div.search-story-item div.item-right h3 a.a-h.text-nowrap.item-title",
     "search_image": "div.search-story-item a.item-img img.img-loading"
+  },
+  "reaperscans": {
+    "inherits": "leviatan"
+  },
+  "zeroscans": {
+    "inherits": "leviatan",
+    "search_href": "https://zeroscans.com/comics?query=%s",
+    "search_link": "a.list-title.ajax",
+    "search_title": "a.list-title.ajax",
+    "search_image": "a.media-content[style]",
+    "search_image_attr": "style"
+  },
+  "the-nonames": {
+    "inherits": "leviatan"
   },
   "leviatan": {
     "title": "h5.text-highlight",
@@ -80,7 +95,8 @@
     "chapter_posted": "time",
     "chapter_posted_attr": "",
     "chapter_href": "span a",
-    "image": "#content img.chapter-img"
+    "image": "#content img.chapter-img",
+    "search_href": "https://lhtranslation.net/app/manga/controllers/search.single.php?q=%s"
   },
   "mangastream": {
     "description": "#example2",
@@ -149,18 +165,6 @@
     "image": "img"
   },
   "mangainn": {
-    "title": "div.content-inner.inner-page h5.widget-heading",
-    "description": "div.note.note-default.margin-top-15 p",
-    "cover": "img.img-responsive.mobile-img",
-    "alternative_titles": "dt:contains(\"Alternative Name:\") + dd",
-    "status": "dt:contains(Status) + dd",
-    "genres": "dt:contains(Categories) + dd",
-    "authors": "dt:contains(Author:) + dd",
-    "chapter_row": "#chapter_list ul.chapter-list li",
-    "chapter_title": "a span.val",
-    "chapter_posted": "a span.date",
-    "chapter_number": "",
-    "chapter_href": "a",
-    "image": "img"
+    "inherits": "mngdoom"
   }
 }

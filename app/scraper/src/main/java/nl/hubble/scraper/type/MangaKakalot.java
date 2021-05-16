@@ -29,13 +29,4 @@ public class MangaKakalot extends MangaNelo {
     public String[] hostnames() {
         return new String[]{"mangakakalot"};
     }
-
-    private boolean accepts(String hostname) {
-        for (String accept : hostnames()) {
-            if (hostname.contains(accept)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

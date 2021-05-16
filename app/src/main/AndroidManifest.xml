@@ -21,10 +21,12 @@
         android:theme="@style/Theme.ScrapManga">
         <activity
             android:name=".ui.SettingsActivity"
-            android:label="@string/settings" />
+            android:label="@string/settings"
+            android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name=".ui.SearchActivity"
-            android:label="@string/search_online" />
+            android:label="@string/search_online"
+            android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name=".ui.ReadActivity"
             android:hardwareAccelerated="false" />

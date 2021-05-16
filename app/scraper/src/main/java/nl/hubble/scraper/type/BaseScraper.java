@@ -10,12 +10,15 @@ public interface BaseScraper {
 
     Manga parse(URL url, int timeout) throws Exception;
 
-    List<Manga> search(String query, int timeout) throws Exception;
+    List<Manga> search(String hostname, String query, int timeout) throws Exception;
 
     List<String> images(URL url, int timeout) throws Exception;
 
     default boolean accepts(URL url) {
-        String hostname = url.getHost();
+        return accepts(url.getHost());
+    }
+
+    default boolean accepts(String hostname) {
         for (String accept : hostnames()) {
             if (hostname.contains(accept)) {
                 return true;

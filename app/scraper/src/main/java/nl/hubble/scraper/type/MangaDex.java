@@ -102,7 +102,7 @@ public class MangaDex implements BaseScraper {
     }
 
     @Override
-    public List<Manga> search(String query, int timeout) {
+    public List<Manga> search(String hostname, String query, int timeout) {
         return null;
     }
 

@@ -37,10 +37,11 @@ public class SearchAdapter extends ArrayAdapter<Manga> {
         TextView title = convertView.findViewById(R.id.title);
         title.setText(manga.getTitle());
 
+        String hostname = manga.getHostname();
         ImageView image = convertView.findViewById(R.id.image);
         Glide
                 .with(image)
-                .load(new GlideUrl(manga.getCover(), new LazyHeaders.Builder().addHeader("referer", manga.getHostname()).build()))
+                .load(hostname.contains("zeroscans") ? manga.getCover() : new GlideUrl(manga.getCover(), new LazyHeaders.Builder().addHeader("referer", hostname).build()))
                 .into(image);
 
         return convertView;

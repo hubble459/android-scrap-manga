@@ -314,6 +314,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public static boolean filled(Object object) {
+        boolean res = false;
+        if (object != null) {
+            res = true;
+            if (object instanceof String) {
+                res = !((String) object).isEmpty();
+            } else if (object instanceof Integer) {
+                res = ((Integer) object) != -1;
+            }
+        }
+        return res;
+    }
+
+    public static String arrayAsString(List<?> list) {
+        return list.toString().replaceAll("[\\[\\]]", "").replace(",", ";");
+    }
+
     @Override
     public void onOpen(SQLiteDatabase db) {
         db.execSQL("PRAGMA foreign_keys = ON;");

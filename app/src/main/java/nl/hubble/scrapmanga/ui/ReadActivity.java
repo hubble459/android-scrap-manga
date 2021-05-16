@@ -1,8 +1,13 @@
 package nl.hubble.scrapmanga.ui;
 
 import android.Manifest;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -165,7 +170,7 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
                             }
                             break;
                         case 1:
-                            ImageUtil.loadImage(image, link, errorListener, referer, false);
+                            ImageUtil.loadImage(image, link, errorListener, referer, chapter.isDownloaded());
                             break;
                     }
                 })
@@ -181,7 +186,6 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
 
     @Override
     public void finished(List<String> images) {
-        Log.i("OWO", "finished: " + images);
         this.images = images;
         runOnUiThread(() -> {
             setTitle(chapter.getTitle());
@@ -254,5 +258,31 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
     protected void onDestroy() {
         destroyed = true;
         super.onDestroy();
+    }
+
+    public void openInBrowser(MenuItem item) {
+        DialogInterface.OnClickListener listener = (dialog, which) -> {
+            if (which == DialogInterface.BUTTON_NEGATIVE) {
+                dialog.cancel();
+            } else if (which == DialogInterface.BUTTON_POSITIVE) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(chapter.getHref()));
+                startActivity(browserIntent);
+            } else if (which == DialogInterface.BUTTON_NEUTRAL) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                if (clipboard != null) {
+                    ClipData clip = ClipData.newPlainText(chapter.getTitle(), chapter.getHref());
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(this, "Copied to clipboard!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Website")
+                .setMessage("Open in browser?")
+                .setPositiveButton("Yes", listener)
+                .setNegativeButton("No", listener)
+                .setNeutralButton("Copy", listener)
+                .show();
     }
 }

@@ -25,7 +25,6 @@ public class MngDoom extends QueryScraper {
     protected void getDocument(URL url) throws IOException {
         doc = Jsoup.connect(url.toExternalForm())
                 .timeout(timeout)
-                .header("", "")
                 .header("origin", url.getHost())
                 .header("referer", url.getHost())
                 .followRedirects(true)

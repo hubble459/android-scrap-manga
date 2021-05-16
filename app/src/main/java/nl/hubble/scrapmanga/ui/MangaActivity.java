@@ -1,11 +1,16 @@
 package nl.hubble.scrapmanga.ui;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -25,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -38,6 +44,9 @@ import nl.hubble.scrapmanga.model.Reading;
 import nl.hubble.scrapmanga.util.DatabaseHelper;
 import nl.hubble.scrapmanga.util.LoadManga;
 import nl.hubble.scrapmanga.view.MangaDetailView;
+
+import static nl.hubble.scrapmanga.util.DatabaseHelper.arrayAsString;
+import static nl.hubble.scrapmanga.util.DatabaseHelper.filled;
 
 public class MangaActivity extends CustomActivity implements LoadManga.OnFinishedListener {
     public static final String MANGA_KEY = "manga";
@@ -123,19 +132,6 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
 
     private boolean isComplete(Manga manga) {
         return filled(manga.getTitle()) && filled(manga.getHref()) && filled(manga.getHostname());
-    }
-
-    private boolean filled(Object object) {
-        boolean res = false;
-        if (object != null) {
-            res = true;
-            if (object instanceof String) {
-                res = !((String) object).isEmpty();
-            } else if (object instanceof Integer) {
-                res = ((Integer) object) != -1;
-            }
-        }
-        return res;
     }
 
     @Override
@@ -228,10 +224,6 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
     private void stopLoading() {
         loading.setVisibility(View.GONE);
         errorText.setText("");
-    }
-
-    private String arrayAsString(List<?> list) {
-        return list.toString().replaceAll("[\\[\\]]", "").replace(",", ";");
     }
 
     @Override
@@ -351,5 +343,31 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             cv.put("auto_refresh", reading.isAutoRefresh() ? 1 : 0);
             db.update("reading", cv, "reading_id IS ?", new String[]{String.valueOf(reading.getId())});
         }
+    }
+
+    public void openInBrowser(MenuItem item) {
+        DialogInterface.OnClickListener listener = (dialog, which) -> {
+            if (which == DialogInterface.BUTTON_NEGATIVE) {
+                dialog.cancel();
+            } else if (which == DialogInterface.BUTTON_POSITIVE) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(manga.getHref()));
+                startActivity(browserIntent);
+            } else if (which == DialogInterface.BUTTON_NEUTRAL) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                if (clipboard != null) {
+                    ClipData clip = ClipData.newPlainText(manga.getTitle(), manga.getHref());
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(this, "Copied to clipboard!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Website")
+                .setMessage("Open in browser?")
+                .setPositiveButton("Yes", listener)
+                .setNegativeButton("No", listener)
+                .setNeutralButton("Copy", listener)
+                .show();
     }
 }

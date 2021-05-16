@@ -66,4 +66,6 @@
     <string name="select_all">Select</string>
     <string name="search_online">Search Online</string>
     <string name="search">Search</string>
+    <string name="read">Read</string>
+    <string name="open_in_browser">Open in Browser</string>
 </resources>

@@ -1,6 +1,7 @@
 package nl.hubble.scraper.type;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.jsoup.Jsoup;
@@ -26,14 +27,26 @@ public class Leviatan extends QueryScraper {
     @Override
     public Manga parse(URL url, int timeout) throws Exception {
         Manga manga = super.parse(url, timeout);
+        parseCover(url, manga);
+        return manga;
+    }
+
+    @Override
+    public List<Manga> search(String hostname, String query, int timeout) throws Exception {
+        List<Manga> results = super.search(hostname, query, timeout);
+        for (Manga manga : results) {
+            parseCover(new URL(searchHrefQuery), manga);
+        }
+        return results;
+    }
+
+    private void parseCover(URL url, Manga manga) {
         if (!manga.getCover().isEmpty()) {
             manga.setCover(manga.getCover().substring(21).replace(")", ""));
             if (!manga.getCover().contains(url.getHost())) {
                 manga.setCover(url.getProtocol() + "://" + url.getHost() + manga.getCover());
             }
         }
-
-        return manga;
     }
 
     @Override
