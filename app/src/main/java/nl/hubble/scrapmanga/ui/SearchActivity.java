@@ -28,6 +28,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import nl.hubble.scraper.MangaScraper;
 import nl.hubble.scraper.model.Manga;
@@ -157,11 +158,13 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             MangaDetailView details = bsd.findViewById(R.id.details);
             if (details != null) {
                 details.setStatus(manga.isStatus() ? getString(R.string.ongoing) : getString(R.string.finished));
-                if (!manga.getAuthors().isEmpty()) {
-                    details.setAuthors(arrayAsString(manga.getAuthors()));
+                List<String> authors = manga.getAuthors();
+                if (!authors.isEmpty()) {
+                    details.setAuthors(arrayAsString(authors.subList(0, Math.min(authors.size(), 3))));
                 }
-                if (!manga.getAltTitles().isEmpty()) {
-                    details.setAltTitles(arrayAsString(manga.getAltTitles()));
+                List<String> altTitles = manga.getAltTitles();
+                if (!altTitles.isEmpty()) {
+                    details.setAltTitles(arrayAsString(altTitles.subList(0, Math.min(altTitles.size(), 3))));
                 }
                 if (!manga.getGenres().isEmpty()) {
                     details.setGenres(arrayAsString(manga.getGenres()));
@@ -174,7 +177,8 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             // Description
             TextView description = bsd.findViewById(R.id.description);
             if (description != null) {
-                description.setText(manga.getDescription());
+                String desc = manga.getDescription();
+                description.setText(String.format(Locale.getDefault(), "%s%s", desc.substring(0, Math.min(500, desc.length())), desc.length() > 500 ? "..." : ""));
             }
 
             // Read Button

@@ -31,23 +31,6 @@
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
-        app:title="@string/chapters">
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:iconSpaceReserved="false"
-        app:title="MangaDex">
-
-        <Preference
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="@string/lazy_load_default"
-            app:title="Login to MangaDex" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:iconSpaceReserved="false"
         app:title="Miscellaneous">
 
         <Preference

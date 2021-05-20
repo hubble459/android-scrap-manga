@@ -128,7 +128,7 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
         ImageAdapter adapter = new ImageAdapter(this, images, referer, chapter.isDownloaded(), errorListener);
         list.setVisibility(View.VISIBLE);
         list.setAdapter(adapter);
-        list.setSelection(reading.getPage());
+        list.setSelection(chapter.getPage());
         list.setOnItemLongClickListener((parent, view, position, id) -> {
             imageOptions(view.findViewById(R.id.image), (String) parent.getItemAtPosition(position));
             return true;
@@ -269,7 +269,7 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
     }
 
     private void updatePage() {
-        new Thread(() -> DatabaseHelper.updatePage(this, reading, list.getFirstVisiblePosition())).start();
+        new Thread(() -> DatabaseHelper.updatePage(this, chapter, list.getFirstVisiblePosition())).start();
     }
 
     public void openInBrowser(MenuItem item) {

@@ -28,14 +28,14 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class Utils {
     enum DateFormat {
-        MANGADEX("yyyy-mm-dd k:m:s"),
+        MANGADEX("yy-MM-dd k:m:s"),
         MANGAKAKALOT_1("MMM-dd-yy k:m"),
         MANGAKAKALOT_2("MMM-dd-yy"),
-        MANGANELO_1("MMM dd,yyyy - k:m a"),
-        MANGANELO_2("MMM dd,yyyy k:m"),
-        WEBTOONS("MMM dd, yyyy"),
-        WHIMSUBS("yyyy.mm.dd"),
-        MANGAFOX("MMM dd,yyyy");
+        MANGANELO_1("MMM dd,yy - k:m a"),
+        MANGANELO_2("MMM dd,yy k:m"),
+        WEBTOONS("MMM dd, yy"),
+        WHIMSUBS("yy.MM.dd"),
+        MANGAFOX("MMM dd,yy");
 
         private final String format;
 

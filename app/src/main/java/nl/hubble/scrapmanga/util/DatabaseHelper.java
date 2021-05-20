@@ -54,7 +54,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             reading.setHref(c.getString(c.getColumnIndex("href")));
             reading.setTitle(c.getString(c.getColumnIndex("title")));
             reading.setHostname(c.getString(c.getColumnIndex("hostname")));
-            reading.setPage(c.getInt(c.getColumnIndex("page")));
             reading.setTotalChapters(c.getInt(c.getColumnIndex("total_chapters")));
             reading.setChapter(c.getInt(c.getColumnIndex("chapter")));
             reading.setRefreshed(c.getLong(c.getColumnIndex("refreshed")));
@@ -211,6 +210,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int chapter_id = c.getColumnIndex("chapter_id");
         int title = c.getColumnIndex("title");
         int href = c.getColumnIndex("href");
+        int page = c.getColumnIndex("page");
         int number = c.getColumnIndex("number");
         int posted = c.getColumnIndex("posted");
 
@@ -221,6 +221,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             chapter.setId(c.getInt(chapter_id));
             chapter.setTitle(c.getString(title));
             chapter.setHref(c.getString(href));
+            chapter.setPage(c.getInt(page));
             chapter.setNumber(c.getInt(number));
             chapter.setPosted(c.getLong(posted));
             chapter.setDownloaded(FileUtil.exists(basePath + chapter.getId()));
@@ -237,7 +238,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int hrefIndex = cursor.getColumnIndex("href");
         int titleIndex = cursor.getColumnIndex("title");
         int hostIndex = cursor.getColumnIndex("hostname");
-        int pageIndex = cursor.getColumnIndex("page");
         int totalIndex = cursor.getColumnIndex("total_chapters");
         int chapterIndex = cursor.getColumnIndex("chapter");
         int refreshedIndex = cursor.getColumnIndex("refreshed");
@@ -250,7 +250,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             r.setHref(cursor.getString(hrefIndex));
             r.setTitle(cursor.getString(titleIndex));
             r.setHostname(cursor.getString(hostIndex));
-            r.setPage(cursor.getInt(pageIndex));
             r.setTotalChapters(cursor.getInt(totalIndex));
             r.setChapter(cursor.getInt(chapterIndex));
             r.setRefreshed(cursor.getLong(refreshedIndex));
@@ -268,7 +267,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("href", reading.getHref());
         cv.put("title", reading.getTitle());
         cv.put("hostname", reading.getHostname());
-        cv.put("page", reading.getPage());
         cv.put("total_chapters", reading.getTotalChapters());
         cv.put("chapter", reading.getChapter());
         reading.setRefreshed(System.currentTimeMillis());
@@ -281,7 +279,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("title", reading.getTitle());
         cv.put("hostname", reading.getHostname());
-        cv.put("page", reading.getPage());
         cv.put("chapter", reading.getChapter());
         cv.put("total_chapters", reading.getTotalChapters());
         cv.put("refreshed", reading.getRefreshed());
@@ -294,11 +291,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public static void updatePage(Context context, Reading reading, int page) {
+    public static void updatePage(Context context, Chapter chapter, int page) {
         ContentValues cv = new ContentValues();
-        reading.setPage(page);
-        cv.put("page", reading.getPage());
-        updateReading(context, reading, cv);
+        chapter.setPage(page);
+        cv.put("page", chapter.getPage());
+        SQLiteDatabase db = getDatabase(context);
+        db.update("chapters", cv, "chapter_id IS ?", new String[]{String.valueOf(chapter.getId())});
+        db.close();
     }
 
     @Override
@@ -313,7 +312,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "href TEXT NOT NULL UNIQUE, " +
                     "title TEXT NOT NULL, " +
                     "hostname TEXT NOT NULL, " +
-                    "page INTEGER DEFAULT 0, " +
                     "refreshed INTEGER DEFAULT 0, " +
                     "auto_refresh INTEGER DEFAULT 1, " +
                     "total_chapters INTEGER NOT NULL DEFAULT 0, " +
@@ -339,6 +337,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "manga_id INTEGER NOT NULL, " +
                     "title TEXT NOT NULL, " +
                     "href TEXT NOT NULL, " +
+                    "page INTEGER DEFAULT 0, " +
                     "number INTEGER NOT NULL, " +
                     "posted INTEGER NOT NULL, " +
                     "FOREIGN KEY (manga_id) " +
@@ -346,7 +345,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "ON UPDATE CASCADE " +
                     "ON DELETE CASCADE);");
         }
-        db.close();
     }
 
     @Override

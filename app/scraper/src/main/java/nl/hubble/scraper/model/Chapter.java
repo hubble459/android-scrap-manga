@@ -8,6 +8,7 @@ public class Chapter implements Serializable {
     private long id;
     private String title;
     private String href;
+    private int page;
     private double number;
     private long posted;
     private boolean downloaded;
@@ -18,6 +19,7 @@ public class Chapter implements Serializable {
         return "Chapter{" +
                 "title='" + getTitle() + '\'' +
                 ", href='" + getHref() + '\'' +
+                ", page=" + getPage() +
                 ", number=" + getNumber() +
                 ", posted=" + getPosted() +
                 ", downloaded=" + isDownloaded() +
@@ -54,6 +56,14 @@ public class Chapter implements Serializable {
 
     public void setHref(String href) {
         this.href = href;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
     }
 
     public double getNumber() {

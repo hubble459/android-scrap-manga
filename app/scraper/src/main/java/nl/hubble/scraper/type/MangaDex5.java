@@ -48,9 +48,10 @@ public class MangaDex5 implements BaseScraper {
 
         rateLimit.call();
 
-        String mangaId = "eb2d1a45-d4e7-4e32-a171-b5b029c5b0cb";
         JSONObject object = getJSON(url, timeout);
-        JSONObject attributes = object.getJSONObject("data").getJSONObject("attributes");
+        JSONObject data = object.getJSONObject("data");
+        String mangaId = data.getString("id");
+        JSONObject attributes = data.getJSONObject("attributes");
         Manga manga = new Manga();
 
         // Title
