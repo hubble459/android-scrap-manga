@@ -13,22 +13,23 @@
         android:layout_width="100dp"
         android:layout_height="150dp"
         android:contentDescription="@string/image"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/error" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
+        android:textAlignment="center"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
         android:textAppearance="@style/TextAppearance.Title"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/cover"
+        app:layout_constraintEnd_toStartOf="@+id/cover"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Title here" />
+        tools:text="Title here"
+        android:gravity="center_horizontal" />
 
     <nl.hubble.scrapmanga.view.MangaDetailView
         android:id="@+id/details"
@@ -36,8 +37,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
         android:maxHeight="200dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cover"
+        app:layout_constraintEnd_toStartOf="@+id/cover"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <TextView
@@ -55,11 +56,9 @@
 
     <Button
         android:id="@+id/read"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/read"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/description" />

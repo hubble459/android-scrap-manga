@@ -83,4 +83,5 @@
     <string name="manga_url">Manga URL</string>
     <string name="add">Add</string>
     <string name="manga_missing_data">Manga is missing important data</string>
+    <string name="open">Open</string>
 </resources>

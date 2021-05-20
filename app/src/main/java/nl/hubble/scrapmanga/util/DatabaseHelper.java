@@ -109,13 +109,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return manga;
     }
 
-    public static boolean exists(Context context, String url) {
+    public static int exists(Context context, String url) {
         SQLiteDatabase db = getDatabase(context);
-        Cursor c = db.rawQuery("SELECT href FROM reading WHERE href IS ?;", new String[]{url});
+        Cursor c = db.rawQuery("SELECT * FROM reading WHERE href IS ?;", new String[]{url});
         int count = c.getCount();
+        int readingId = -1;
+        if (count == 1) {
+            c.moveToNext();
+            readingId = c.getInt(c.getColumnIndex("reading_id"));
+        }
         c.close();
         db.close();
-        return count == 1;
+        return readingId;
     }
 
     public static void insertManga(Context context, Reading reading, Manga manga) {
@@ -136,6 +141,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cv.put("manga_id", manga.getId());
             cv.put("title", chapter.getTitle());
             cv.put("href", chapter.getHref());
+            cv.put("page", chapter.getPage());
             cv.put("number", chapter.getNumber());
             cv.put("posted", chapter.getPosted());
             chapter.setId(db.insert("chapters", null, cv));
@@ -172,6 +178,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cv.put("manga_id", manga.getId());
             cv.put("title", chapter.getTitle());
             cv.put("href", chapter.getHref());
+            cv.put("page", chapter.getPage());
             cv.put("number", chapter.getNumber());
             cv.put("posted", chapter.getPosted());
             chapter.setId(db.insert("chapters", null, cv));
@@ -197,6 +204,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cv.put("manga_id", manga.getId());
             cv.put("title", chapter.getTitle());
             cv.put("href", chapter.getHref());
+            cv.put("page", chapter.getPage());
             cv.put("number", chapter.getNumber());
             cv.put("posted", chapter.getPosted());
             chapter.setId(db.insert("chapters", null, cv));

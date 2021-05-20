@@ -84,7 +84,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
     }
 
     private void init(boolean force) {
-        if (!DatabaseHelper.exists(this, reading.getHref())) {
+        if (DatabaseHelper.exists(this, reading.getHref()) == -1) {
             runOnUiThread(() -> {
                 Toast.makeText(this, "manga is null ówò?", Toast.LENGTH_SHORT).show();
                 stopLoading();

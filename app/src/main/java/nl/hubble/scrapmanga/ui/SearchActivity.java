@@ -1,7 +1,6 @@
 package nl.hubble.scrapmanga.ui;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -68,6 +67,7 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
 
         loading = findViewById(R.id.loading);
         ArrayList<String> searchEngineNames = scraper.getSearchEnginesNames();
+        searchEngineNames.add(0, searchEngineNames.remove(searchEngineNames.size() - 1));
 
         Spinner spinner = findViewById(R.id.hostname_spinner);
         spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, searchEngineNames));
@@ -94,11 +94,18 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
     }
 
     private void openManga(Manga manga) {
-        loading(true);
-        try {
-            new LoadManga(this, manga.getHref(), this);
-        } catch (MalformedURLException e) {
-            error(e);
+        int readingId = DatabaseHelper.exists(this, manga.getHref());
+        if (readingId != -1) {
+            Reading reading = DatabaseHelper.getReading(this, readingId);
+            manga = DatabaseHelper.getManga(this, reading);
+            finished(manga, reading);
+        } else {
+            loading(true);
+            try {
+                new LoadManga(this, manga.getHref(), this);
+            } catch (MalformedURLException e) {
+                error(e);
+            }
         }
     }
 
@@ -126,6 +133,10 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
 
     @Override
     public void finished(Manga manga) {
+        finished(manga, null);
+    }
+
+    public void finished(Manga manga, final Reading reading) {
         runOnUiThread(() -> {
             loading(false);
 
@@ -142,15 +153,18 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             if (filled(manga.getCover())) {
                 ImageView cover = bsd.findViewById(R.id.cover);
                 if (cover != null) {
-                    GlideUrl url = new GlideUrl(manga.getCover(), new LazyHeaders.Builder()
-                            .addHeader("Referer", manga.getHref())
-                            .build());
-                    Glide.with(this)
-                            .load(url)
-                            .placeholder(R.drawable.placeholder)
-                            .error(R.drawable.error)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .into(cover);
+                    cover.setVisibility(manga.getCover() == null ? View.GONE : View.VISIBLE);
+                    if (manga.getCover() != null) {
+                        GlideUrl url = new GlideUrl(manga.getCover(), new LazyHeaders.Builder()
+                                .addHeader("Referer", manga.getHref())
+                                .build());
+                        Glide.with(this)
+                                .load(url)
+                                .placeholder(R.drawable.placeholder)
+                                .error(R.drawable.error)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .into(cover);
+                    }
                 }
             }
 
@@ -184,11 +198,18 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             // Read Button
             Button read = bsd.findViewById(R.id.read);
             if (read != null) {
+                if (reading != null) {
+                    read.setText(R.string.open);
+                }
                 read.setOnClickListener(v -> {
-                    Reading reading = addReadingAndManga(manga);
+                    Reading r = reading;
+                    if (r == null) {
+                        r = addReadingAndManga(manga);
+                    }
                     Intent intent = new Intent(this, MangaActivity.class);
-                    intent.putExtra(READING_KEY, reading);
+                    intent.putExtra(READING_KEY, r);
                     startActivity(intent);
+                    finish();
                 });
             }
 

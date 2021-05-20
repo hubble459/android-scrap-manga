@@ -254,7 +254,7 @@ public class MainActivity extends CustomActivity {
                 });
 
         for (String url : urls) {
-            if (!DatabaseHelper.exists(this, url)) {
+            if (DatabaseHelper.exists(this, url) == -1) {
                 try {
                     URL urlObj = new URL(url);
                     threads.add(new Thread(() -> {
@@ -297,7 +297,7 @@ public class MainActivity extends CustomActivity {
     }
 
     private void loadManga(String url) {
-        if (DatabaseHelper.exists(this, url)) {
+        if (DatabaseHelper.exists(this, url) != -1) {
             Toast.makeText(this, getString(R.string.manga_already_exists), Toast.LENGTH_SHORT).show();
             load(false);
             return;
