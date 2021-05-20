@@ -2,7 +2,6 @@ package nl.hubble.scrapmanga.util;
 
 import android.content.Context;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 

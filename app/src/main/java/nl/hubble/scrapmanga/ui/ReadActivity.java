@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +40,7 @@ import nl.hubble.scrapmanga.R;
 import nl.hubble.scrapmanga.adapter.ImageAdapter;
 import nl.hubble.scrapmanga.model.CustomActivity;
 import nl.hubble.scrapmanga.model.Reading;
+import nl.hubble.scrapmanga.util.DatabaseHelper;
 import nl.hubble.scrapmanga.util.FileUtil;
 import nl.hubble.scrapmanga.util.ImageUtil;
 import nl.hubble.scrapmanga.util.LoadChapter;
@@ -81,10 +81,10 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
             }
 
             new MaterialAlertDialogBuilder(this)
-                    .setTitle("Error")
+                    .setTitle(R.string.error)
                     .setMessage("Url = " + url + "\nError = " + error)
-                    .setPositiveButton("Refresh", refresh)
-                    .setNegativeButton("Continue Reading", (dialog, which) -> ignoreErrors = false)
+                    .setPositiveButton(R.string.refresh, refresh)
+                    .setNegativeButton(R.string.continue_reading, (dialog, which) -> ignoreErrors = false)
                     .setOnDismissListener(dialog -> ignoreErrors = false)
                     .show();
         }
@@ -128,6 +128,7 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
         ImageAdapter adapter = new ImageAdapter(this, images, referer, chapter.isDownloaded(), errorListener);
         list.setVisibility(View.VISIBLE);
         list.setAdapter(adapter);
+        list.setSelection(reading.getPage());
         list.setOnItemLongClickListener((parent, view, position, id) -> {
             imageOptions(view.findViewById(R.id.image), (String) parent.getItemAtPosition(position));
             return true;
@@ -141,8 +142,8 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
 
     private void imageOptions(ImageView image, String link) {
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Options")
-                .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new String[]{"Save", "Reload"}), (dialog, which) -> {
+                .setTitle(R.string.options)
+                .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new String[]{getString(R.string.image_save), getString(R.string.image_reload)}), (dialog, which) -> {
                     switch (which) {
                         case 0:
                             if (chapter.isDownloaded()) {
@@ -156,7 +157,7 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
                                     FileUtil.copy(link, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + image.getId() + extension, new FileUtil.DownloadAdapter() {
                                         @Override
                                         public void onFinish() {
-                                            runOnUiThread(() -> Toast.makeText(ReadActivity.this, "Image Saved", Toast.LENGTH_SHORT).show());
+                                            runOnUiThread(() -> Toast.makeText(ReadActivity.this, ReadActivity.this.getString(R.string.image_saved), Toast.LENGTH_SHORT).show());
                                         }
 
                                         @Override
@@ -174,7 +175,7 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
                             break;
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -257,7 +258,18 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
     @Override
     protected void onDestroy() {
         destroyed = true;
+        updatePage();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        updatePage();
+        super.onPause();
+    }
+
+    private void updatePage() {
+        new Thread(() -> DatabaseHelper.updatePage(this, reading, list.getFirstVisiblePosition())).start();
     }
 
     public void openInBrowser(MenuItem item) {
@@ -272,17 +284,17 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
                 if (clipboard != null) {
                     ClipData clip = ClipData.newPlainText(chapter.getTitle(), chapter.getHref());
                     clipboard.setPrimaryClip(clip);
-                    Toast.makeText(this, "Copied to clipboard!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show();
                 }
             }
         };
 
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Website")
-                .setMessage("Open in browser?")
-                .setPositiveButton("Yes", listener)
-                .setNegativeButton("No", listener)
-                .setNeutralButton("Copy", listener)
+                .setTitle(R.string.website)
+                .setMessage(R.string.open_in_browser)
+                .setPositiveButton(R.string.yes, listener)
+                .setNegativeButton(R.string.no, listener)
+                .setNeutralButton(R.string.copy, listener)
                 .show();
     }
 }

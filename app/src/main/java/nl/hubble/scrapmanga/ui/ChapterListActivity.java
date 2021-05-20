@@ -29,7 +29,6 @@ public class ChapterListActivity extends CustomActivity implements AdapterView.O
     public static final String CHAPTER_KEY = "chapter";
     private Reading reading;
     private Manga manga;
-    private SQLiteDatabase db;
     private ChapterAdapter adapter;
     private ListView list;
     private boolean downloading;
@@ -54,11 +53,7 @@ public class ChapterListActivity extends CustomActivity implements AdapterView.O
                     chapter.setDownloaded(FileUtil.exists(basePath + chapter.getId()));
                 }
 
-                new Thread(() -> {
-                    db = DatabaseHelper.getDatabase(this);
-
-                    runOnUiThread(() -> init(downloading));
-                }).start();
+                new Thread(() -> runOnUiThread(() -> init(downloading))).start();
             }
         } else {
             // Show error?
@@ -115,7 +110,7 @@ public class ChapterListActivity extends CustomActivity implements AdapterView.O
     private void updateReading(int value) {
         if (reading.getChapter() != value) {
             reading.setChapter(value);
-            DatabaseHelper.updateReading(db, reading);
+            DatabaseHelper.updateReading(this, reading);
         }
     }
 
@@ -223,7 +218,7 @@ public class ChapterListActivity extends CustomActivity implements AdapterView.O
     protected void onResume() {
         super.onResume();
         if (adapter != null) {
-            Reading reading = DatabaseHelper.getReading(db, this.reading.getId());
+            Reading reading = DatabaseHelper.getReading(this, this.reading.getId());
             if (reading != null) {
                 adapter.setRead(reading.getTotalChapters() - reading.getChapter());
                 adapter.notifyDataSetChanged();

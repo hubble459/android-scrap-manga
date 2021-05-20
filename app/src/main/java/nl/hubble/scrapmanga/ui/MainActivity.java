@@ -7,10 +7,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,7 +45,6 @@ public class MainActivity extends CustomActivity {
     private ListView list;
     private SearchView searchBar;
     private View dismiss, loading, emptyText;
-    private SQLiteDatabase db;
     private Menu menu;
     private boolean isLoading;
 
@@ -66,8 +63,6 @@ public class MainActivity extends CustomActivity {
 
         emptyText = findViewById(R.id.empty_text);
 
-        DatabaseHelper dbh = new DatabaseHelper(this);
-        db = dbh.getReadableDatabase();
         reloadReading();
 
         adapter = new ReadingAdapter(this, readingList);
@@ -79,7 +74,7 @@ public class MainActivity extends CustomActivity {
 
         list.setOnItemLongClickListener((parent, view, position, id) -> {
             Reading r = (Reading) parent.getItemAtPosition(position);
-            deleteManga(r);
+            confirmRemoveManga(r);
             return true;
         });
 
@@ -104,24 +99,33 @@ public class MainActivity extends CustomActivity {
         dismiss = findViewById(R.id.dismiss);
     }
 
-    private void deleteManga(Reading reading) {
+    private void confirmRemoveManga(Reading reading) {
         new AlertDialog.Builder(this)
-                .setTitle("Delete Manga")
-                .setMessage(String.format("Are you sure you want to remove '%s' ?", reading.getTitle()))
+                .setTitle(R.string.delete_manga)
+                .setMessage(String.format(getString(R.string.delete_manga_confirm), reading.getTitle()))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     load(true);
-                    DatabaseHelper.reset(db, reading);
-                    reloadReading();
-                    Toast.makeText(this, String.format("Removed '%s'", reading.getTitle()), Toast.LENGTH_SHORT).show();
-                    load(false);
+                    removeManga(reading);
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
+    private void removeManga(Reading reading) {
+        new Thread(() -> {
+            DatabaseHelper.remove(this, reading);
+
+            runOnUiThread(() -> {
+                reloadReading();
+                Toast.makeText(this, String.format(getString(R.string.removed_manga), reading.getTitle()), Toast.LENGTH_SHORT).show();
+                load(false);
+            });
+        }).start();
+    }
+
     private void reloadReading() {
         readingList.clear();
-        readingList.addAll(DatabaseHelper.getAllReading(db));
+        readingList.addAll(DatabaseHelper.getAllReading(this));
         if (adapter != null) {
             adapter.notifyDataSetChanged();
             adapter.notifyFilter(readingList);
@@ -171,7 +175,7 @@ public class MainActivity extends CustomActivity {
         layout.setOrientation(LinearLayout.VERTICAL);
         EditText input = new EditText(this);
 
-        input.setHint("Manga URL");
+        input.setHint(R.string.manga_url);
         input.setSelectAllOnFocus(true);
         layout.addView(input);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -196,7 +200,7 @@ public class MainActivity extends CustomActivity {
                 .setTitle(R.string.add_manga)
                 .setView(layout)
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton("Add", (dialog, which) -> {
+                .setPositiveButton(R.string.add, (dialog, which) -> {
                     String inputText = input.getText().toString();
                     load(true);
                     if (isURL(inputText)) {
@@ -214,7 +218,7 @@ public class MainActivity extends CustomActivity {
         String[] urls = inputText.split("[\\n]");
 
         if (urls.length <= 1) {
-            Toast.makeText(this, "Not a valid URL!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.invalid_url, Toast.LENGTH_SHORT).show();
             load(false);
         } else {
             loadMultipleManga(urls);
@@ -250,7 +254,7 @@ public class MainActivity extends CustomActivity {
                 });
 
         for (String url : urls) {
-            if (!DatabaseHelper.exists(db, url)) {
+            if (!DatabaseHelper.exists(this, url)) {
                 try {
                     URL urlObj = new URL(url);
                     threads.add(new Thread(() -> {
@@ -293,8 +297,8 @@ public class MainActivity extends CustomActivity {
     }
 
     private void loadManga(String url) {
-        if (DatabaseHelper.exists(db, url)) {
-            Toast.makeText(this, "This manga already exists!", Toast.LENGTH_SHORT).show();
+        if (DatabaseHelper.exists(this, url)) {
+            Toast.makeText(this, getString(R.string.manga_already_exists), Toast.LENGTH_SHORT).show();
             load(false);
             return;
         }
@@ -320,7 +324,7 @@ public class MainActivity extends CustomActivity {
                 }
             });
         } catch (MalformedURLException e) {
-            Toast.makeText(this, "Not a valid URL!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_url), Toast.LENGTH_SHORT).show();
             load(false);
         }
     }
@@ -334,8 +338,8 @@ public class MainActivity extends CustomActivity {
         reading.setHostname(manga.getHostname());
         reading.setAutoRefresh(true);
 
-        DatabaseHelper.insertReading(db, reading);
-        DatabaseHelper.insertManga(db, reading, manga);
+        DatabaseHelper.insertReading(this, reading);
+        DatabaseHelper.insertManga(this, reading, manga);
         return reading;
     }
 
@@ -378,7 +382,7 @@ public class MainActivity extends CustomActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (db != null) {
+        if (list != null) {
             reloadReading();
         }
     }
@@ -423,7 +427,7 @@ public class MainActivity extends CustomActivity {
                         MangaScraper ms = new MangaScraper(this);
                         Manga manga = ms.parse(new URL(reading.getHref()));
                         if (!isComplete(manga)) {
-                            throw new Exception("Manga is missing important data");
+                            throw new Exception(getString(R.string.manga_missing_data));
                         } else {
                             update(reading, manga);
                         }
@@ -474,14 +478,19 @@ public class MainActivity extends CustomActivity {
     }
 
     private synchronized void update(Reading reading, Manga manga) {
+        int totalChapters = manga.getChapters().size();
+
         ContentValues cv = new ContentValues();
         cv.put("title", manga.getTitle());
         cv.put("href", manga.getHref());
-        cv.put("total_chapters", manga.getChapters().size());
+        cv.put("total_chapters", totalChapters);
 
-        DatabaseHelper.updateManga(db, manga, reading);
+        reading.setTitle(manga.getTitle());
+        reading.setHref(manga.getHref());
+        reading.setTotalChapters(totalChapters);
 
-        db.update("reading", cv, "href IS ?", new String[]{reading.getHref()});
+        DatabaseHelper.updateManga(this, manga, reading.getId());
+        DatabaseHelper.updateReading(this, reading);
     }
 
     public void settings(MenuItem item) {

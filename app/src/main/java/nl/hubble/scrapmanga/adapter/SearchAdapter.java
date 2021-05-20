@@ -37,13 +37,16 @@ public class SearchAdapter extends ArrayAdapter<Manga> {
         TextView title = convertView.findViewById(R.id.title);
         title.setText(manga.getTitle());
 
-        String hostname = manga.getHostname();
         ImageView image = convertView.findViewById(R.id.image);
-        Glide
-                .with(image)
-                .load(hostname.contains("zeroscans") ? manga.getCover() : new GlideUrl(manga.getCover(), new LazyHeaders.Builder().addHeader("referer", hostname).build()))
-                .into(image);
-
+        String cover = manga.getCover();
+        image.setVisibility(cover == null ? View.GONE : View.VISIBLE);
+        if (cover != null) {
+            String hostname = manga.getHostname();
+            Glide
+                    .with(image)
+                    .load(hostname.contains("zeroscans") ? cover : new GlideUrl(cover, new LazyHeaders.Builder().addHeader("referer", hostname).build()))
+                    .into(image);
+        }
         return convertView;
     }
 }

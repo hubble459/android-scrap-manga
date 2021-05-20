@@ -12,6 +12,7 @@ import nl.hubble.scraper.type.BaseScraper;
 import nl.hubble.scraper.type.LHTranslation;
 import nl.hubble.scraper.type.Leviatan;
 import nl.hubble.scraper.type.MangaDex;
+import nl.hubble.scraper.type.MangaDex5;
 import nl.hubble.scraper.type.MangaKakalot;
 import nl.hubble.scraper.type.MangaNelo;
 import nl.hubble.scraper.type.MangaStream;
@@ -38,7 +39,8 @@ public class MangaScraper {
 
     public MangaScraper(Context context) {
         scrapers.add(new ArangScans(context));
-        scrapers.add(new MangaDex(context));
+//        scrapers.add(new MangaDex(context));
+        scrapers.add(new MangaDex5(context));
         scrapers.add(new MangaStream(context));
         scrapers.add(new MngDoom(context));
         scrapers.add(new Leviatan(context));

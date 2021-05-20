@@ -125,8 +125,6 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
 
     @Override
     public void finished(Manga manga) {
-        SQLiteDatabase db = DatabaseHelper.getDatabase(this);
-
         runOnUiThread(() -> {
             loading(false);
 
@@ -183,8 +181,7 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             Button read = bsd.findViewById(R.id.read);
             if (read != null) {
                 read.setOnClickListener(v -> {
-                    Reading reading = addReadingAndManga(db, manga);
-                    db.releaseReference();
+                    Reading reading = addReadingAndManga(manga);
                     Intent intent = new Intent(this, MangaActivity.class);
                     intent.putExtra(READING_KEY, reading);
                     startActivity(intent);
@@ -195,7 +192,7 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
         });
     }
 
-    private Reading addReadingAndManga(SQLiteDatabase db, Manga manga) {
+    private Reading addReadingAndManga(Manga manga) {
         Reading reading = new Reading();
 
         reading.setTotalChapters(manga.getChapters().size());
@@ -204,8 +201,8 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
         reading.setHostname(manga.getHostname());
         reading.setAutoRefresh(true);
 
-        DatabaseHelper.insertReading(db, reading);
-        DatabaseHelper.insertManga(db, reading, manga);
+        DatabaseHelper.insertReading(this, reading);
+        DatabaseHelper.insertManga(this, reading, manga);
         return reading;
     }
 

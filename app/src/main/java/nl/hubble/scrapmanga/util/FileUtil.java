@@ -20,7 +20,6 @@ import javax.net.ssl.HttpsURLConnection;
 import nl.hubble.scraper.model.Chapter;
 
 public class FileUtil {
-    private static final String TAG = "FileUtil";
     private static boolean cancelled;
 
     public static synchronized void cancelDownloadChapter() {
@@ -41,11 +40,9 @@ public class FileUtil {
                             URL image = new URL(images.get(i));
 
                             String extension = image.getFile().substring(image.getFile().lastIndexOf("."));
-                            int finalI = i;
                             new Web(image, path + File.separator + i + extension, url.getHost(), new DownloadListener() {
                                 @Override
                                 public void onFinish() {
-                                    Log.i(TAG, "onFinish: image " + chapter.getId() + ":" + finalI + " downloaded");
                                     synchronized (lock) {
                                         lock.notify();
                                     }

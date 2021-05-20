@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -50,7 +49,6 @@ import static nl.hubble.scrapmanga.util.DatabaseHelper.filled;
 
 public class MangaActivity extends CustomActivity implements LoadManga.OnFinishedListener {
     public static final String MANGA_KEY = "manga";
-    private SQLiteDatabase db;
     private Reading reading;
     private Manga manga;
     private TextView number;
@@ -86,26 +84,20 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
     }
 
     private void init(boolean force) {
-        new Thread(() -> {
-            if (db == null) {
-                db = DatabaseHelper.getDatabase(this);
-            }
-
-            if (!DatabaseHelper.exists(db, reading.getHref())) {
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "manga is null ówò?", Toast.LENGTH_SHORT).show();
-                    stopLoading();
-                });
-            } else {
-                loadManga(force);
-            }
-        }).start();
+        if (!DatabaseHelper.exists(this, reading.getHref())) {
+            runOnUiThread(() -> {
+                Toast.makeText(this, "manga is null ówò?", Toast.LENGTH_SHORT).show();
+                stopLoading();
+            });
+        } else {
+            loadManga(force);
+        }
     }
 
     private void updateReading(int value) {
         if (reading.getChapter() != value) {
             reading.setChapter(value);
-            DatabaseHelper.updateReading(db, reading);
+            DatabaseHelper.updateReading(this, reading);
         }
 
         if (readingProgress != null && readingProgress.getProgress() != value) {
@@ -124,8 +116,8 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
                 e.printStackTrace();
             }
         } else {
-            reading = DatabaseHelper.getReading(db, reading.getId());
-            manga = DatabaseHelper.getManga(this, db, reading);
+            reading = DatabaseHelper.getReading(this, reading.getId());
+            manga = DatabaseHelper.getManga(this, reading);
             finished(manga);
         }
     }
@@ -149,7 +141,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
 
             if (manga != m) {
                 if (manga == null) {
-                    manga = DatabaseHelper.getManga(this, db, reading);
+                    manga = DatabaseHelper.getManga(this, reading);
                 }
                 m.setId(manga.getId());
                 manga = m;
@@ -158,9 +150,9 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
                 reading.setTotalChapters(m.getChapters().size());
                 reading.setHostname(m.getHostname());
                 reading.setRefreshed(System.currentTimeMillis());
-                DatabaseHelper.updateManga(db, manga);
+                DatabaseHelper.updateManga(this, manga);
             }
-            DatabaseHelper.updateReading(db, reading);
+            DatabaseHelper.updateReading(this, reading);
 
             // Title
             TextView title = findViewById(R.id.title);
@@ -300,8 +292,8 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
     @Override
     protected void onResume() {
         super.onResume();
-        if (readingProgress != null && reading != null && number != null && db != null) {
-            Reading reading = DatabaseHelper.getReading(db, this.reading.getId());
+        if (readingProgress != null && reading != null && number != null) {
+            Reading reading = DatabaseHelper.getReading(this, this.reading.getId());
             if (reading != null) {
                 this.reading = reading;
                 readingProgress.setProgress(reading.getChapter());
@@ -322,7 +314,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
     }
 
     public void deleteManga(MenuItem item) {
-        DatabaseHelper.reset(db, reading);
+        DatabaseHelper.remove(this, reading);
         Toast.makeText(this, getString(R.string.deleted), Toast.LENGTH_SHORT).show();
         finish();
     }
@@ -341,7 +333,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             reading.setAutoRefresh(item.isChecked());
             ContentValues cv = new ContentValues();
             cv.put("auto_refresh", reading.isAutoRefresh() ? 1 : 0);
-            db.update("reading", cv, "reading_id IS ?", new String[]{String.valueOf(reading.getId())});
+            DatabaseHelper.updateReading(this, reading, cv);
         }
     }
 

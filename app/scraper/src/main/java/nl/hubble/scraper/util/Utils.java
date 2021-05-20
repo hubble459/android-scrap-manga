@@ -28,6 +28,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class Utils {
     enum DateFormat {
+        MANGADEX("yyyy-mm-dd k:m:s"),
         MANGAKAKALOT_1("MMM-dd-yy k:m"),
         MANGAKAKALOT_2("MMM-dd-yy"),
         MANGANELO_1("MMM dd,yyyy - k:m a"),
@@ -225,6 +226,35 @@ public class Utils {
             if (updated <= 0) return "";
             SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy k:mm a", Locale.US);
             return dtf.format(new Date(updated));
+        }
+    }
+
+    public static class RateLimit {
+        private final long perMS;
+        private final int amount;
+        private long start;
+        private int count;
+
+        public RateLimit(int amount, long perMS) {
+            this.amount = amount;
+            this.perMS = perMS;
+            this.start = System.currentTimeMillis();
+        }
+
+        public synchronized void call() {
+            long diff = System.currentTimeMillis() - start;
+            if (diff < perMS) {
+                if (++count == amount) {
+                    try {
+                        wait(perMS - diff);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                start = System.currentTimeMillis();
+                count = 0;
+            }
         }
     }
 }

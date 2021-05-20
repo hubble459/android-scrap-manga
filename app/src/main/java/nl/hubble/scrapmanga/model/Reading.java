@@ -7,6 +7,7 @@ public class Reading implements Serializable {
     private String href;
     private String title;
     private String hostname;
+    private int page;
     private int totalChapters;
     private int chapter;
     private boolean autoRefresh;
@@ -42,6 +43,14 @@ public class Reading implements Serializable {
 
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
     }
 
     public int getTotalChapters() {

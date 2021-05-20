@@ -52,6 +52,7 @@
     <string name="warning">Warning!</string>
     <string name="skipping_chapter_warning">You might be skipping some chapters, are you sure you want to start reading the last chapter?</string>
     <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="there_are_no_chapters">There are no chapters</string>
     <string name="deleted">Deleted!</string>
     <string name="invalid_url">Not a valid URL!</string>
@@ -68,4 +69,18 @@
     <string name="search">Search</string>
     <string name="read">Read</string>
     <string name="open_in_browser">Open in Browser</string>
+    <string name="image_saved">Image Saved</string>
+    <string name="image_save">Save</string>
+    <string name="image_reload">Reload</string>
+    <string name="continue_reading">Continue Reading</string>
+    <string name="options">Options</string>
+    <string name="copied_to_clipboard">Copied to clipboard!</string>
+    <string name="website">Website</string>
+    <string name="copy">Copy</string>
+    <string name="manga_already_exists">This manga already exists!</string>
+    <string name="delete_manga_confirm">Are you sure you want to remove \'%s\'?</string>
+    <string name="removed_manga">Removed \'%s\'</string>
+    <string name="manga_url">Manga URL</string>
+    <string name="add">Add</string>
+    <string name="manga_missing_data">Manga is missing important data</string>
 </resources>

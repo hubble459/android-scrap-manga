@@ -1,7 +1,6 @@
 package nl.hubble.scrapmanga.view;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +22,6 @@ import nl.hubble.scrapmanga.util.DatabaseHelper;
 public class PaginationView extends LinearLayout {
     private Button prev, next;
     private Spinner chapterSpinner;
-    private SQLiteDatabase db;
     private Reading reading;
     private Manga manga;
     private PaginationListener listener;
@@ -70,7 +68,7 @@ public class PaginationView extends LinearLayout {
                 int chap = reading.getTotalChapters() - position;
                 if (chap != reading.getChapter()) {
                     reading.setChapter(chap);
-                    DatabaseHelper.updateReading(db, reading);
+                    DatabaseHelper.updateReading(getContext(), reading);
 
                     Chapter chapter = manga.getChapters().get(position);
                     listener.reload(chapter);
@@ -83,8 +81,6 @@ public class PaginationView extends LinearLayout {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
-        db = DatabaseHelper.getDatabase(getContext());
     }
 
     public void init(PaginationListener listener, Manga manga, Reading reading) {
