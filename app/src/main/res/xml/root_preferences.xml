@@ -34,9 +34,13 @@
         app:title="Miscellaneous">
 
         <Preference
-            app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="@string/download_database"
             app:title="@string/download_database" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="@string/supported_websites"
+            app:title="@string/supported_websites" />
     </PreferenceCategory>
 </PreferenceScreen>

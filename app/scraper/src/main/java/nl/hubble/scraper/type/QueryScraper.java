@@ -24,7 +24,7 @@ import nl.hubble.scraper.model.Manga;
 import nl.hubble.scraper.util.Utils;
 
 public class QueryScraper implements BaseScraper {
-    protected static final String SPLIT_REGEX = "(, | ; | : | - )";
+    protected static final String SPLIT_REGEX = "(, | ?; | : | - )";
     protected Context context;
     protected int timeout;
     protected Document doc;
@@ -396,7 +396,13 @@ public class QueryScraper implements BaseScraper {
                     } else {
                         chapter.setPosted(-1);
                     }
-                    chapter.setHref(chapElement.selectFirst(chapterHrefQuery).absUrl("href"));
+                    String href;
+                    if (chapterHrefQuery.equals("$row")) {
+                        href = chapElement.absUrl("href");
+                    } else {
+                        href = chapElement.selectFirst(chapterHrefQuery).absUrl("href");
+                    }
+                    chapter.setHref(href);
                     chapters.add(chapter);
                 }
             }

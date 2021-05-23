@@ -66,10 +66,10 @@ public class PaginationView extends LinearLayout {
                 if (reading == null || manga == null || listener == null) return;
 
                 int chap = reading.getTotalChapters() - position;
+                listener.mightReload();
                 if (chap != reading.getChapter()) {
                     reading.setChapter(chap);
                     DatabaseHelper.updateReading(getContext(), reading);
-
                     Chapter chapter = manga.getChapters().get(position);
                     listener.reload(chapter);
 
@@ -109,5 +109,7 @@ public class PaginationView extends LinearLayout {
 
     public interface PaginationListener {
         void reload(Chapter chapter);
+
+        void mightReload();
     }
 }

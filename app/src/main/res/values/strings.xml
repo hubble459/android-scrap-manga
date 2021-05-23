@@ -84,4 +84,5 @@
     <string name="add">Add</string>
     <string name="manga_missing_data">Manga is missing important data</string>
     <string name="open">Open</string>
+    <string name="supported_websites">Supported Websites</string>
 </resources>

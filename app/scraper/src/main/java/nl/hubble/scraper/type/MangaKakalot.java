@@ -18,7 +18,7 @@ public class MangaKakalot extends MangaNelo {
             if (!manga.getAuthors().isEmpty()) {
                 manga.getAuthors().remove(0);
             }
-            if (!manga.getAltTitles().isEmpty()) {
+            if (!url.getHost().contains("mangakakalots") && !manga.getAltTitles().isEmpty()) {
                 manga.getAltTitles().remove(0);
             }
         }

@@ -28,7 +28,7 @@ public class Manga implements Serializable {
                 ", description='" + getDescription() + '\'' +
                 ", href='" + getHref() + '\'' +
                 ", img='" + getCover() + '\'' +
-                ", status=" + isStatus() +
+                ", status=" + getStatus() +
                 ", updated=" + getUpdated() +
                 ", altTitles=" + getAltTitles() +
                 ", authors=" + getAuthors() +
@@ -85,7 +85,7 @@ public class Manga implements Serializable {
         this.cover = cover;
     }
 
-    public boolean isStatus() {
+    public boolean getStatus() {
         return status;
     }
 

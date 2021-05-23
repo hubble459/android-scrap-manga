@@ -17,12 +17,27 @@ public class Webtoon extends QueryScraper {
 
     @Override
     public Manga parse(URL url, int timeout) throws Exception {
-        if (!url.getHost().contains("m.webtoons")) {
-            url = new URL(url.toString().replace("webtoons.com", "m.webtoons.com"));
-        }
-
-        return super.parse(url, timeout);
+//        if (!url.getHost().contains("m.webtoons")) {
+//            url = new URL(url.toString().replace("www.webtoons.com", "m.webtoons.com"));
+//        }
+//
+//        return super.parse(url, timeout);
+        throw new Exception("Webtoon is not supported anymore");
     }
+
+    // "webtoon": {
+    //    "title": "p.subj",
+    //    "description": "p.summary span",
+    //    "cover": "#_backgroundImage img",
+    //    "authors": "p.author",
+    //    "genres": "p.genre",
+    //    "chapter_row": "div#ct a[class*=list\\,g]",
+    //    "chapter_title": "span.ellipsis",
+    //    "chapter_posted": "p.date",
+    //    "chapter_href": "$row",
+    //    "image": "div.ImageGallery img",
+    //    "image_attr": "data-url"
+    //  },
 
     @Override
     protected void getDocument(URL url) throws IOException {

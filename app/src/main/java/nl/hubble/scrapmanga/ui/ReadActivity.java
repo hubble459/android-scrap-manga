@@ -256,6 +256,11 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
     }
 
     @Override
+    public void mightReload() {
+        updatePage();
+    }
+
+    @Override
     protected void onDestroy() {
         destroyed = true;
         updatePage();
@@ -269,7 +274,9 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
     }
 
     private void updatePage() {
-        new Thread(() -> DatabaseHelper.updatePage(this, chapter, list.getFirstVisiblePosition())).start();
+        if (chapter != null && list != null) {
+            new Thread(() -> DatabaseHelper.updatePage(this, chapter, list.getFirstVisiblePosition())).start();
+        }
     }
 
     public void openInBrowser(MenuItem item) {

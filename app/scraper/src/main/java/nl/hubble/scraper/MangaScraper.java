@@ -4,14 +4,12 @@ import android.content.Context;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import nl.hubble.scraper.model.Manga;
-import nl.hubble.scraper.type.ArangScans;
 import nl.hubble.scraper.type.BaseScraper;
 import nl.hubble.scraper.type.LHTranslation;
-import nl.hubble.scraper.type.Leviatan;
-import nl.hubble.scraper.type.MangaDex;
 import nl.hubble.scraper.type.MangaDex5;
 import nl.hubble.scraper.type.MangaKakalot;
 import nl.hubble.scraper.type.MangaNelo;
@@ -20,6 +18,7 @@ import nl.hubble.scraper.type.MngDoom;
 import nl.hubble.scraper.type.QueryScraper;
 import nl.hubble.scraper.type.Webtoon;
 import nl.hubble.scraper.type.WhimSubs;
+import nl.hubble.scraper.type.ZeroScans;
 
 /**
  * - MangaSushi
@@ -38,17 +37,16 @@ public class MangaScraper {
     private final ArrayList<BaseScraper> scrapers = new ArrayList<>();
 
     public MangaScraper(Context context) {
-        scrapers.add(new ArangScans(context));
 //        scrapers.add(new MangaDex(context));
         scrapers.add(new MangaDex5(context));
         scrapers.add(new MangaStream(context));
         scrapers.add(new MngDoom(context));
-        scrapers.add(new Leviatan(context));
         scrapers.add(new LHTranslation(context));
         scrapers.add(new MangaKakalot(context));
         scrapers.add(new MangaNelo(context));
         scrapers.add(new Webtoon(context));
         scrapers.add(new WhimSubs(context));
+        scrapers.add(new ZeroScans(context));
         scrapers.add(new QueryScraper(context));
     }
 
@@ -105,6 +103,18 @@ public class MangaScraper {
 
     public List<String> images(URL url) throws Exception {
         return images(url, 20000);
+    }
+
+    public ArrayList<String> getEngineNames() {
+        ArrayList<String> engines = new ArrayList<>();
+        for (BaseScraper scraper : scrapers) {
+            for (String hostname : scraper.hostnames()) {
+                if (!engines.contains(hostname)) {
+                    engines.add(hostname);
+                }
+            }
+        }
+        return engines;
     }
 
     public ArrayList<BaseScraper> getSearchEngines() {

@@ -3,6 +3,8 @@ package nl.hubble.scrapmanga.ui;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.StringRes;
@@ -12,6 +14,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import java.io.File;
 import java.io.IOException;
 
+import nl.hubble.scraper.MangaScraper;
 import nl.hubble.scraper.util.Utils;
 import nl.hubble.scrapmanga.R;
 import nl.hubble.scrapmanga.model.CustomActivity;
@@ -78,6 +81,13 @@ public class SettingsActivity extends CustomActivity {
                 });
                 dt.start();
                 Toast.makeText(requireContext(), "Downloading...", Toast.LENGTH_SHORT).show();
+                return true;
+            });
+
+            addListener(R.string.supported_websites, preference -> {
+                Spinner spinner = new Spinner(getContext(), Spinner.MODE_DIALOG);
+                spinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, new MangaScraper(getContext()).getEngineNames()));
+                spinner.performClick();
                 return true;
             });
         }

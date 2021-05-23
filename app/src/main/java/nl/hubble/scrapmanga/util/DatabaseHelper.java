@@ -132,7 +132,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("genres", listAsString(manga.getGenres()));
         cv.put("alt_titles", listAsString(manga.getAltTitles()));
         cv.put("cover_url", manga.getCover());
-        cv.put("status", manga.isStatus() ? 1 : 0);
+        cv.put("status", manga.getStatus() ? 1 : 0);
         cv.put("updated", manga.getUpdated());
         manga.setId(db.insert("manga", null, cv));
 
@@ -168,7 +168,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("genres", listAsString(manga.getGenres()));
         cv.put("alt_titles", listAsString(manga.getAltTitles()));
         cv.put("cover_url", manga.getCover());
-        cv.put("status", manga.isStatus() ? 1 : 0);
+        cv.put("status", manga.getStatus() ? 1 : 0);
         cv.put("updated", manga.getUpdated());
         db.update("manga", cv, "manga_id IS ?", new String[]{String.valueOf(manga.getId())});
 
@@ -194,7 +194,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("genres", listAsString(manga.getGenres()));
         cv.put("alt_titles", listAsString(manga.getAltTitles()));
         cv.put("cover_url", manga.getCover());
-        cv.put("status", manga.isStatus() ? 1 : 0);
+        cv.put("status", manga.getStatus() ? 1 : 0);
         cv.put("updated", manga.getUpdated());
         db.update("manga", cv, "reading_id IS ?", new String[]{String.valueOf(readingId)});
 

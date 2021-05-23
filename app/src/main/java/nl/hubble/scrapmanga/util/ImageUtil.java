@@ -49,7 +49,7 @@ public class ImageUtil {
         if (local) {
             rb = Glide.with(image).load(new File(urlString));
         } else {
-            if (urlString.contains("isekaiscan") /*|| urlString.contains("zeroscans")*/) {
+            if (urlString.contains("isekaiscan") || urlString.contains("zeroscans") || urlString.contains("the-nonames")) {
                 url = new GlideUrl(urlString);
             } else {
                 url = new GlideUrl(urlString, new LazyHeaders.Builder()

@@ -28,6 +28,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class Utils {
     enum DateFormat {
+        MANGAFAST("yy-MM-dd"),
         MANGADEX("yy-MM-dd k:m:s"),
         MANGAKAKALOT_1("MMM-dd-yy k:m"),
         MANGAKAKALOT_2("MMM-dd-yy"),
@@ -224,7 +225,7 @@ public class Utils {
 
         public static String toString(long updated) {
             if (updated <= 0) return "";
-            SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy k:mm a", Locale.US);
+            SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy K:mm a", Locale.US);
             return dtf.format(new Date(updated));
         }
     }

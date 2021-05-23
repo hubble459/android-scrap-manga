@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.hubble.scraper.model.Manga;
 import nl.hubble.scraper.util.Utils;
 
 public class WhimSubs extends QueryScraper {
@@ -19,6 +20,13 @@ public class WhimSubs extends QueryScraper {
     @Override
     public String[] hostnames() {
         return new String[]{"whimsubs"};
+    }
+
+    @Override
+    public Manga parse(URL url, int timeout) throws Exception {
+        Manga m = super.parse(url, timeout);
+        m.setTitle(m.getTitle().replace("rss_feed", ""));
+        return m;
     }
 
     @Override

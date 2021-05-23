@@ -171,7 +171,7 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             // Details
             MangaDetailView details = bsd.findViewById(R.id.details);
             if (details != null) {
-                details.setStatus(manga.isStatus() ? getString(R.string.ongoing) : getString(R.string.finished));
+                details.setStatus(manga.getStatus() ? getString(R.string.ongoing) : getString(R.string.finished));
                 List<String> authors = manga.getAuthors();
                 if (!authors.isEmpty()) {
                     details.setAuthors(arrayAsString(authors.subList(0, Math.min(authors.size(), 3))));

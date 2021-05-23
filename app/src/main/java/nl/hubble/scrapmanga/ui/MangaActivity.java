@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -135,6 +136,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
         runOnUiThread(() -> {
             if (!isComplete(m)) {
                 Toast.makeText(this, "Manga is missing important data", Toast.LENGTH_SHORT).show();
+                Log.e("MangaActivity", "ERROR: " + manga.toString());
                 stopLoading();
                 return;
             }
@@ -178,7 +180,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
 
             // Details
             MangaDetailView details = findViewById(R.id.details);
-            details.setStatus(manga.isStatus() ? getString(R.string.ongoing) : getString(R.string.finished));
+            details.setStatus(manga.getStatus() ? getString(R.string.ongoing) : getString(R.string.finished));
             if (!manga.getAuthors().isEmpty()) {
                 details.setAuthors(arrayAsString(manga.getAuthors()));
             }
