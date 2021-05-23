@@ -2,10 +2,6 @@ package nl.hubble.scraper.type;
 
 import android.content.Context;
 
-import java.net.URL;
-
-import nl.hubble.scraper.model.Manga;
-
 public class MangaNelo extends QueryScraper {
     public MangaNelo(Context context) {
         super(context);
@@ -18,6 +14,6 @@ public class MangaNelo extends QueryScraper {
 
     @Override
     public String[] hostnames() {
-        return new String[]{"manganelo"};
+        return new String[]{"manganelo.com", "m.mangabat.com"};
     }
 }

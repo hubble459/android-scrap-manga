@@ -1,7 +1,6 @@
 package nl.hubble.scrapmanga.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -119,6 +118,10 @@ public class FileUtil {
         return false;
     }
 
+    public static void copy(String fileIn, String fileOut, DownloadListener listener) {
+        new Copy(fileIn, fileOut, listener).start();
+    }
+
     public interface DownloadListener {
         void onFinish();
 
@@ -150,10 +153,6 @@ public class FileUtil {
         public void cancelled() {
 
         }
-    }
-
-    public static void copy(String fileIn, String fileOut, DownloadListener listener) {
-        new Copy(fileIn, fileOut, listener).start();
     }
 
     public static class Copy extends Thread implements Runnable {

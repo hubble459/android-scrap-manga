@@ -4,19 +4,20 @@ import android.content.Context;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import nl.hubble.scraper.model.Manga;
 import nl.hubble.scraper.type.BaseScraper;
+import nl.hubble.scraper.type.KissManga;
 import nl.hubble.scraper.type.LHTranslation;
+import nl.hubble.scraper.type.Madara;
 import nl.hubble.scraper.type.MangaDex5;
+import nl.hubble.scraper.type.MangaFreak;
 import nl.hubble.scraper.type.MangaKakalot;
 import nl.hubble.scraper.type.MangaNelo;
 import nl.hubble.scraper.type.MangaStream;
 import nl.hubble.scraper.type.MngDoom;
 import nl.hubble.scraper.type.QueryScraper;
-import nl.hubble.scraper.type.Webtoon;
 import nl.hubble.scraper.type.WhimSubs;
 import nl.hubble.scraper.type.ZeroScans;
 
@@ -37,14 +38,15 @@ public class MangaScraper {
     private final ArrayList<BaseScraper> scrapers = new ArrayList<>();
 
     public MangaScraper(Context context) {
-//        scrapers.add(new MangaDex(context));
-        scrapers.add(new MangaDex5(context));
-        scrapers.add(new MangaStream(context));
-        scrapers.add(new MngDoom(context));
-        scrapers.add(new LHTranslation(context));
         scrapers.add(new MangaKakalot(context));
         scrapers.add(new MangaNelo(context));
-        scrapers.add(new Webtoon(context));
+        scrapers.add(new KissManga(context));
+        scrapers.add(new Madara(context));
+        scrapers.add(new MangaDex5(context));
+        scrapers.add(new MangaStream(context));
+        scrapers.add(new MangaFreak(context));
+        scrapers.add(new MngDoom(context));
+        scrapers.add(new LHTranslation(context));
         scrapers.add(new WhimSubs(context));
         scrapers.add(new ZeroScans(context));
         scrapers.add(new QueryScraper(context));
@@ -84,14 +86,9 @@ public class MangaScraper {
     public List<Manga> search(String hostname, String query, int timeout) throws Exception {
         List<Manga> results = new ArrayList<>();
         for (BaseScraper scraper : scrapers) {
-            if (scraper.accepts(hostname) || hostname == null) {
-                List<Manga> res = scraper.search(hostname, query, timeout);
-                if (res != null) {
-                    results.addAll(res);
-                }
-                if (hostname != null) {
-                    break;
-                }
+            if (scraper.accepts(hostname)) {
+                results = scraper.search(hostname, query, timeout);
+                break;
             }
         }
         return results;

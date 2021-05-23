@@ -1,7 +1,6 @@
 package nl.hubble.scraper.type;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -53,6 +52,6 @@ public class LHTranslation extends QueryScraper {
 
     @Override
     public String[] hostnames() {
-        return new String[]{"lhtranslation"};
+        return new String[]{"lhtranslation.net"};
     }
 }

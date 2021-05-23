@@ -41,14 +41,16 @@ public class SettingsActivity extends CustomActivity {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
             addListener(R.string.reset_queries_key, preference -> {
-                try {
-                    Utils.Parse.resetQueries(requireContext());
-                    Toast.makeText(getContext(), "Query file has been reset!", Toast.LENGTH_SHORT).show();
-                    return true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return false;
+                new Thread(() -> {
+                    try {
+                        Utils.Parse.resetQueries(requireContext());
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Query file has been reset!", Toast.LENGTH_SHORT).show());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show());
+                    }
+                }).start();
+                return true;
             });
 
             addListener(R.string.download_database, preference -> {

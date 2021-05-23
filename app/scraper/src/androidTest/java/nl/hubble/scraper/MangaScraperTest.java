@@ -7,8 +7,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,6 +31,7 @@ import static org.junit.Assert.fail;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MangaScraperTest {
     private static MangaScraper scraper;
 
@@ -40,16 +43,16 @@ public class MangaScraperTest {
     }
 
     @Test
-    public void testLHTranslation() {
-        parseAndCheck("https://lhtranslation.net/manga-argate-online.html/");
-    }
-
-    @Test
     public void testMangadex() {
         Manga m = parse("https://api.mangadex.org/manga/136a8c13-cf72-427a-8d76-23f1bf070c0e");
         m.setCover("test");
         m.setAuthors(List.of("test"));
         shouldBeComplete(m);
+    }
+
+    @Test
+    public void testLHTranslation() {
+        parseAndCheck("https://lhtranslation.net/manga-argate-online.html/");
     }
 
     @Test
@@ -68,34 +71,33 @@ public class MangaScraperTest {
     }
 
     @Test
-    public void testMangaStream() {
-        Manga m = parse("http://mangastream.mobi/manga/solo-leveling");
-        m.setAltTitles(List.of("test"));
-        m.setAuthors(List.of("test"));
-        m.setGenres(List.of("test"));
-        shouldBeComplete(m);
+    public void testMangaBat() {
+        parseAndCheck("https://m.mangabat.com/read-nh391726");
     }
 
     @Test
-    public void testMngDoom() {
-        parseAndCheck("https://www.mngdoom.com/star-martial-god-technique");
-    }
-
-    @Test
-    public void testMangaInn() {
-        parseAndCheck("https://www.mangainn.net/ore-no-ie-ga-maryoku-spot-datta-ken-sundeiru-dake-de-sekai-saikyou");
-    }
-
-    @Test
-    public void testWhimsubs() {
-        Manga m = parse("https://whimsubs.xyz/r/series/shikkaku-kara-hajimeru-nariagari-madou-shidou/");
-        m.setDescription("owo");
+    public void testKissManga() {
+        Manga m = parse("http://kissmanga.nl/manga/the-eunuchs-consort-rules-the-world");
         m.setAltTitles(List.of("test"));
         shouldBeComplete(m);
     }
 
     @Test
-    public void testZeroSubs() {
+    public void testMangaBatBest() {
+        Manga m = parse("http://mangabat.best/manga/my-little-baby-prince");
+        m.setAltTitles(List.of("test"));
+        shouldBeComplete(m);
+    }
+
+    @Test
+    public void testIsekaiScan() {
+        Manga m = parse("https://isekaiscan.com/manga/gusha-no-hoshi/");
+        m.setAltTitles(List.of("test"));
+        shouldBeComplete(m);
+    }
+
+    @Test
+    public void testZeroScans() {
         Manga m = parse("https://zeroscans.com/comics/636122-hero-i-quit-a-long-time-ago");
         m.setAltTitles(List.of("test"));
         m.setAuthors(List.of("test"));
@@ -122,6 +124,43 @@ public class MangaScraperTest {
     }
 
     @Test
+    public void testMangaStream() {
+        Manga m = parse("http://mangastream.mobi/manga/solo-leveling");
+        m.setAltTitles(List.of("test"));
+        m.setAuthors(List.of("test"));
+        m.setGenres(List.of("test"));
+        shouldBeComplete(m);
+    }
+
+    @Test
+    public void testMangaFreak() {
+        parseAndCheck("http://mangafreak.cloud/manga/kimetsu-no-yaiba");
+    }
+
+    @Test
+    public void testMangaRockTeamSite() {
+        parseAndCheck("http://mangarockteam.site/manga/beast-worlds-wild-consort");
+    }
+
+    @Test
+    public void testWhimsubs() {
+        Manga m = parse("https://whimsubs.xyz/r/series/shikkaku-kara-hajimeru-nariagari-madou-shidou/");
+        m.setDescription("owo");
+        m.setAltTitles(List.of("test"));
+        shouldBeComplete(m);
+    }
+
+    @Test
+    public void testMngDoom() {
+        parseAndCheck("https://www.mngdoom.com/star-martial-god-technique");
+    }
+
+    @Test
+    public void testMangaInn() {
+        parseAndCheck("https://www.mangainn.net/ore-no-ie-ga-maryoku-spot-datta-ken-sundeiru-dake-de-sekai-saikyou");
+    }
+
+    @Test
     public void testMangaFast() {
         Manga m = parse("https://mangafast.net/read/the-beginning-after-the-end/");
         m.setAltTitles(List.of("test"));
@@ -129,10 +168,105 @@ public class MangaScraperTest {
     }
 
     @Test
-    public void testIsekaiScan() {
-        Manga m = parse("https://isekaiscan.com/manga/gusha-no-hoshi/");
+    public void testReadM() {
+        parseAndCheck("https://readm.org/manga/16539");
+    }
+
+    @Test
+    public void testMangaKik() {
+        parseAndCheck("https://mangakik.com/manga/magic-emperor/");
+    }
+
+    @Test
+    public void testManhuaus() {
+        parseAndCheck("https://manhuaus.com/manga/magic-emperor/");
+    }
+
+    @Test
+    public void testMangaWeebs() {
+        parseAndCheck("https://mangaweebs.in/manga/i-raised-the-beast-well/");
+    }
+
+    @Test
+    public void testIsekaiScanManga() {
+        Manga m = parse("https://isekaiscanmanga.com/manga/magic-emperor/");
         m.setAltTitles(List.of("test"));
         shouldBeComplete(m);
+    }
+
+    @Test
+    public void testManhuaPlus() {
+        parseAndCheck("https://manhuaplus.com/manga/the-cultivators-immortal-is-my-sister/");
+    }
+
+    @Test
+    public void testMangaSushi() {
+        parseAndCheck("https://mangasushi.net/manga/yuukyuu-no-gusha-asley-no-kenja-no-susume/");
+    }
+
+    @Test
+    public void test1stKissManga() {
+        parseAndCheck("https://1stkissmanga.com/manga/magic-emperor/");
+    }
+
+    @Test
+    public void testMangaFoxFull() {
+        parseAndCheck("https://mangafoxfull.com/manga/magic-emperor/");
+    }
+
+    @Test
+    public void testS2Manga() {
+        parseAndCheck("https://s2manga.com/manga/under-the-oak-tree/");
+    }
+
+    @Test
+    public void testManhwaTop() {
+        parseAndCheck("https://manhwatop.com/manga/magic-emperor/");
+    }
+
+    @Test
+    public void testManga68() {
+        parseAndCheck("https://manga68.com/manga/magic-emperor/");
+    }
+
+    @Test
+    public void testManga347() {
+        parseAndCheck("https://manga347.com/manga/magic-emperor/");
+    }
+
+    @Test
+    public void testMixedManga() {
+        parseAndCheck("https://mixedmanga.com/manga/the-eunuchs-consort-rules-the-world/");
+    }
+
+    @Test
+    public void testMangaHZ() {
+        parseAndCheck("https://mangahz.com/read/the-eunuchs-consort-rules-the-world/");
+    }
+
+    @Test
+    public void testManhuaDex() {
+        parseAndCheck("https://manhuadex.com/manhua/the-eunuchs-consort-rules-the-world/");
+    }
+
+    @Test
+    public void testMangaChill() {
+        parseAndCheck("https://mangachill.com/manga/the-eunuchs-consort-rules-the-world/");
+    }
+
+    @Test
+    public void testMangaRockTeam() {
+        parseAndCheck("https://mangarockteam.com/manga/the-eunuchs-consort-rules-the-world/");
+    }
+
+    @Test
+    public void testMangaZukiTeam() {
+        parseAndCheck("https://mangazukiteam.com/manga/the-eunuchs-consort-rules-the-world/");
+    }
+
+    @Test
+    public void testAZManhwa() {
+        parseAndCheck("https://azmanhwa.net/manga/the-eunuchs-consort-rules-the-world/");
     }
 
     public Manga parse(String url) {
@@ -177,6 +311,17 @@ public class MangaScraperTest {
             assertNotNull("title", chapter.getTitle());
             assertNotEquals("number", chapter.getNumber(), 0);
             assertNotEquals("posted", chapter.getPosted(), 0);
+        }
+
+        checkImages(manga.getChapters().get(0));
+    }
+
+    public void checkImages(Chapter chapter) {
+        try {
+            List<String> images = scraper.images(new URL(chapter.getHref()));
+            assertFalse(chapter.getHref(), images.isEmpty());
+        } catch (Exception e) {
+            fail(chapter.getHref() + ": " + e.getMessage());
         }
     }
 }

@@ -11,14 +11,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.model.GlideUrl;
-import com.bumptech.glide.load.model.LazyHeaders;
-
 import java.util.List;
 
 import nl.hubble.scraper.model.Manga;
+import nl.hubble.scraper.util.Utils;
 import nl.hubble.scrapmanga.R;
+import nl.hubble.scrapmanga.util.ImageUtil;
 
 public class SearchAdapter extends ArrayAdapter<Manga> {
     public SearchAdapter(@NonNull Context context, @NonNull List<Manga> manga) {
@@ -37,15 +35,21 @@ public class SearchAdapter extends ArrayAdapter<Manga> {
         TextView title = convertView.findViewById(R.id.title);
         title.setText(manga.getTitle());
 
+        TextView hostname = convertView.findViewById(R.id.hostname);
+        hostname.setText(manga.getHostname());
+
+        TextView updated = convertView.findViewById(R.id.updated);
+        if (manga.getUpdated() > 0) {
+            updated.setText(Utils.Parse.toTimeString(manga.getUpdated()));
+        } else {
+            updated.setText("");
+        }
+
         ImageView image = convertView.findViewById(R.id.image);
         String cover = manga.getCover();
         image.setVisibility(cover == null ? View.GONE : View.VISIBLE);
-        if (cover != null) {
-            String hostname = manga.getHostname();
-            Glide
-                    .with(image)
-                    .load(hostname.contains("zeroscans") ? cover : new GlideUrl(cover, new LazyHeaders.Builder().addHeader("referer", hostname).build()))
-                    .into(image);
+        if (cover != null && !cover.isEmpty()) {
+            ImageUtil.loadImage(image, cover, null, manga.getHostname(), false);
         }
         return convertView;
     }

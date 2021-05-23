@@ -19,7 +19,7 @@ public class WhimSubs extends QueryScraper {
 
     @Override
     public String[] hostnames() {
-        return new String[]{"whimsubs"};
+        return new String[]{"whimsubs.xyz"};
     }
 
     @Override

@@ -1,6 +1,7 @@
 package nl.hubble.scrapmanga.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -17,15 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.model.GlideUrl;
-import com.bumptech.glide.load.model.LazyHeaders;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,6 +36,7 @@ import nl.hubble.scrapmanga.adapter.SearchAdapter;
 import nl.hubble.scrapmanga.model.CustomActivity;
 import nl.hubble.scrapmanga.model.Reading;
 import nl.hubble.scrapmanga.util.DatabaseHelper;
+import nl.hubble.scrapmanga.util.ImageUtil;
 import nl.hubble.scrapmanga.util.LoadManga;
 import nl.hubble.scrapmanga.util.SearchManga;
 import nl.hubble.scrapmanga.view.MangaDetailView;
@@ -48,7 +48,7 @@ import static nl.hubble.scrapmanga.util.DatabaseHelper.filled;
 public class SearchActivity extends CustomActivity implements LoadManga.OnFinishedListener, SearchManga.OnFinishedListener {
     private EditText searchBar;
     private MangaScraper scraper;
-    private String selectedHostname = "mangakakalot";
+    private String selectedHostname;
     private ListView list;
     private ProgressBar loading;
 
@@ -65,16 +65,23 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             openManga(manga);
         });
 
+        findViewById(R.id.search_button).setOnClickListener(this::search);
+
         loading = findViewById(R.id.loading);
         ArrayList<String> searchEngineNames = scraper.getSearchEnginesNames();
-        searchEngineNames.add(0, searchEngineNames.remove(searchEngineNames.size() - 1));
+        Collections.sort(searchEngineNames);
+        searchEngineNames.add(0, "all");
 
         Spinner spinner = findViewById(R.id.hostname_spinner);
         spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, searchEngineNames));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setPreviousSelection(position);
                 selectedHostname = (String) parent.getItemAtPosition(position);
+                if (selectedHostname.equals("all")) {
+                    selectedHostname = null;
+                }
             }
 
             @Override
@@ -82,6 +89,7 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
 
             }
         });
+        spinner.setSelection(getPreviousSelection());
 
         searchBar = findViewById(R.id.search_bar);
         searchBar.setOnEditorActionListener((v, actionId, event) -> {
@@ -91,6 +99,18 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             }
             return false;
         });
+    }
+
+    private int getPreviousSelection() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getInt(getString(R.string.search_selection), 0);
+    }
+
+    private void setPreviousSelection(int selection) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(getString(R.string.search_selection), selection);
+        editor.apply();
     }
 
     private void openManga(Manga manga) {
@@ -136,9 +156,10 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
         finished(manga, null);
     }
 
-    public void finished(Manga manga, final Reading reading) {
+    public void finished(Manga manga, final Reading rding) {
         runOnUiThread(() -> {
             loading(false);
+            Reading[] reading = new Reading[]{rding};
 
             BottomSheetDialog bsd = new BottomSheetDialog(this);
             bsd.setContentView(R.layout.view_search_bottom_sheet);
@@ -155,15 +176,7 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
                 if (cover != null) {
                     cover.setVisibility(manga.getCover() == null ? View.GONE : View.VISIBLE);
                     if (manga.getCover() != null) {
-                        GlideUrl url = new GlideUrl(manga.getCover(), new LazyHeaders.Builder()
-                                .addHeader("Referer", manga.getHref())
-                                .build());
-                        Glide.with(this)
-                                .load(url)
-                                .placeholder(R.drawable.placeholder)
-                                .error(R.drawable.error)
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                .into(cover);
+                        ImageUtil.loadImage(cover, manga.getCover(), null, manga.getHref(), false);
                     }
                 }
             }
@@ -184,7 +197,7 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
                     details.setGenres(arrayAsString(manga.getGenres()));
                 }
                 if (manga.getUpdated() > 0) {
-                    details.setUpdated(Utils.Parse.toString(manga.getUpdated()));
+                    details.setUpdated(Utils.Parse.toTimeString(manga.getUpdated()));
                 }
             }
 
@@ -198,19 +211,32 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             // Read Button
             Button read = bsd.findViewById(R.id.read);
             if (read != null) {
-                if (reading != null) {
+                if (reading[0] != null) {
                     read.setText(R.string.open);
                 }
                 read.setOnClickListener(v -> {
-                    Reading r = reading;
-                    if (r == null) {
-                        r = addReadingAndManga(manga);
+                    if (reading[0] == null) {
+                        reading[0] = addReadingAndManga(manga);
                     }
                     Intent intent = new Intent(this, MangaActivity.class);
-                    intent.putExtra(READING_KEY, r);
+                    intent.putExtra(READING_KEY, reading[0]);
                     startActivity(intent);
                     finish();
                 });
+
+                // Add Button
+                Button add = bsd.findViewById(R.id.add);
+                if (add != null) {
+                    if (reading[0] != null) {
+                        add.setVisibility(View.GONE);
+                    } else {
+                        add.setOnClickListener(v -> {
+                            reading[0] = addReadingAndManga(manga);
+                            add.setVisibility(View.GONE);
+                            read.setText(R.string.open);
+                        });
+                    }
+                }
             }
 
             bsd.show();

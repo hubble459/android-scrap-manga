@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Scrap Manga</string>
     <string name="dark_mode">Dark Mode</string>
+    <string name="search_selection">Search Selection</string>
     <string name="preference_file_key">nl.hubble.scrapmanga_preferences.xml</string>
     <string name="cover">cover</string>
     <string name="colon_">:</string>

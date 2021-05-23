@@ -42,14 +42,32 @@ public class ImageUtil {
         Toast.makeText(context, "Image Saved", Toast.LENGTH_SHORT).show();
     }
 
-    public static void loadImage(ImageView image, String urlString, ErrorListener errorListener, String referer, boolean local) {
+    private static boolean noReferer(String url) {
+        String[] noReferer = new String[] {
+                "isekaiscan.com",
+                "zeroscans.com",
+                "the-nonames.com",
+                "manhuaus.com",
+                "manhwatop.com",
+                "mangahz.com",
+                "mangarockteam.com"
+        };
+        for (String host : noReferer) {
+            if (url.contains(host)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void loadImage(ImageView image, String urlString, @Nullable ErrorListener errorListener, String referer, boolean local) {
         GlideUrl url = null;
 
         RequestBuilder<Drawable> rb;
         if (local) {
             rb = Glide.with(image).load(new File(urlString));
         } else {
-            if (urlString.contains("isekaiscan") || urlString.contains("zeroscans") || urlString.contains("the-nonames")) {
+            if (noReferer(urlString)) {
                 url = new GlideUrl(urlString);
             } else {
                 url = new GlideUrl(urlString, new LazyHeaders.Builder()
@@ -59,8 +77,11 @@ public class ImageUtil {
             rb = Glide.with(image).load(url);
         }
 
+        if (errorListener != null) {
+            rb = rb.listener(createRequestListener(errorListener, local ? urlString : url.toStringUrl(), image));
+        }
+
         rb
-                .listener(createRequestListener(errorListener, local ? urlString : url.toStringUrl(), image))
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.error)
                 .skipMemoryCache(true)

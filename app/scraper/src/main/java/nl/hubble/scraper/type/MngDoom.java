@@ -17,12 +17,11 @@ public class MngDoom extends QueryScraper {
     @Override
     public List<String> images(URL url, int timeout) throws Exception {
         url = new URL(url.toExternalForm() + "/all-pages");
-        Log.i("OWO", "images: " + url.toExternalForm());
         return super.images(url, timeout);
     }
 
     @Override
-    protected void getDocument(URL url) throws IOException {
+    protected void getDocument() throws IOException {
         doc = Jsoup.connect(url.toExternalForm())
                 .timeout(timeout)
                 .header("origin", url.getHost())
@@ -33,6 +32,6 @@ public class MngDoom extends QueryScraper {
 
     @Override
     public String[] hostnames() {
-        return new String[]{"mngdoom", "mangainn"};
+        return new String[]{"www.mngdoom.com", "www.mangainn.net"};
     }
 }

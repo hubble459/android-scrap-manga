@@ -27,6 +27,6 @@ public class MangaKakalot extends MangaNelo {
 
     @Override
     public String[] hostnames() {
-        return new String[]{"mangakakalot"};
+        return new String[]{"mangakakalot.com", "ww2.mangakakalots.com"};
     }
 }

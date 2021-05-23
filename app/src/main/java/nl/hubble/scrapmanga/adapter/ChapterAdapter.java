@@ -19,8 +19,8 @@ import nl.hubble.scraper.util.Utils;
 import nl.hubble.scrapmanga.R;
 
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
-    private int read;
     protected int layout;
+    private int read;
     private OnCheckedChanged listener;
 
     public ChapterAdapter(@NonNull Context context, @NonNull List<Chapter> chapters, int read) {
@@ -31,10 +31,6 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     public void setOnCheckedChangeListener(OnCheckedChanged listener) {
         this.listener = listener;
-    }
-
-    public interface OnCheckedChanged {
-        void changed();
     }
 
     @NonNull
@@ -50,7 +46,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
         title.setText(chapter.getTitle());
 
         TextView posted = convertView.findViewById(R.id.posted);
-        posted.setText(Utils.Parse.toString(chapter.getPosted()));
+        posted.setText(Utils.Parse.toTimeString(chapter.getPosted()));
 
         CheckBox downloaded = convertView.findViewById(R.id.downloaded);
         if (downloaded != null) {
@@ -91,5 +87,9 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             getItem(i).setDownloaded(true);
         }
         notifyDataSetChanged();
+    }
+
+    public interface OnCheckedChanged {
+        void changed();
     }
 }

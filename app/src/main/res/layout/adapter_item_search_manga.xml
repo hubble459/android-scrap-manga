@@ -5,26 +5,47 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="8dp"
-    android:minHeight="100dp"
     android:layout_marginVertical="8dp"
     android:gravity="center"
+    android:minHeight="100dp"
     android:orientation="horizontal"
     tools:ignore="UseCompoundDrawables">
 
     <ImageView
-        tools:src="@drawable/error"
         android:id="@+id/image"
         android:layout_width="70dp"
         android:layout_height="100dp"
-        android:contentDescription="@string/image" />
+        android:contentDescription="@string/image"
+        tools:src="@drawable/error" />
 
-    <TextView
-        android:id="@+id/title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:textAppearance="@style/TextAppearance.Title2"
-        android:textColor="#B00B69"
-        tools:text="Title here" />
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:textAppearance="@style/TextAppearance.Title2"
+            android:textColor="#B00B69"
+            tools:text="Title here" />
+
+        <TextView
+            android:id="@+id/hostname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Title3"
+            tools:text="mangakakalot.com" />
+
+        <TextView
+            android:id="@+id/updated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            tools:text="27/01/2021 3:25 PM" />
+    </LinearLayout>
 </LinearLayout>

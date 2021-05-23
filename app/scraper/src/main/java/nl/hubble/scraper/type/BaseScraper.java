@@ -20,7 +20,7 @@ public interface BaseScraper {
 
     default boolean accepts(String hostname) {
         for (String accept : hostnames()) {
-            if (hostname.contains(accept)) {
+            if (hostname.equals(accept)) {
                 return true;
             }
         }

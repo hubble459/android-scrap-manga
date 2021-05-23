@@ -219,11 +219,10 @@ public class Utils {
             OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(new File(context.getExternalFilesDir(null), "queries.json")));
             out.write(jsonString);
             out.close();
-            Log.i(TAG, "resetQueries: Query file created");
             return jsonString;
         }
 
-        public static String toString(long updated) {
+        public static String toTimeString(long updated) {
             if (updated <= 0) return "";
             SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy K:mm a", Locale.US);
             return dtf.format(new Date(updated));

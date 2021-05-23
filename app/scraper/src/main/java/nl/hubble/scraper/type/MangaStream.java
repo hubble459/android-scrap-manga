@@ -1,6 +1,7 @@
 package nl.hubble.scraper.type;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +19,7 @@ public class MangaStream extends QueryScraper {
 
     @Override
     public List<String> images(URL url, int timeout) throws Exception {
+        Log.i("OWO", "images: " + "OMG");
         Document doc = Jsoup.parse(url, timeout);
 
         Element p = doc.selectFirst("#arraydata");
@@ -28,6 +30,6 @@ public class MangaStream extends QueryScraper {
 
     @Override
     public String[] hostnames() {
-        return new String[]{"mangastream"};
+        return new String[]{"mangastream.mobi"};
     }
 }

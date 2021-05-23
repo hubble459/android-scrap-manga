@@ -1,7 +1,6 @@
 package nl.hubble.scraper.type;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,8 +27,11 @@ public class QueryScraper implements BaseScraper {
     protected Context context;
     protected int timeout;
     protected Document doc;
+    protected URL url;
+    protected String tag = "";
     protected String titleQuery = "";
     protected String statusQuery = "";
+    protected String updatedQuery = "";
     protected String descQuery = "";
     protected String coverQuery = "";
     protected String coverAttrQuery = "";
@@ -50,6 +52,7 @@ public class QueryScraper implements BaseScraper {
     protected String searchTitleQuery = "";
     protected String searchImageQuery = "";
     protected String searchImageAttrQuery = "";
+    protected String searchUpdatedQuery = "";
 
     public QueryScraper(Context context) {
         this.context = context;
@@ -60,8 +63,10 @@ public class QueryScraper implements BaseScraper {
         if (config.has("inherits")) {
             initQueries(config.getString("inherits"));
         }
+        this.tag = config.optString("tag", tag);
         this.titleQuery = config.optString("title", titleQuery);
         this.statusQuery = config.optString("status", statusQuery);
+        this.updatedQuery = config.optString("updated", updatedQuery);
         this.descQuery = config.optString("description", descQuery);
         this.coverQuery = config.optString("cover", coverQuery);
         this.coverAttrQuery = config.optString("cover_attr", coverAttrQuery.isEmpty() ? "src" : coverAttrQuery);
@@ -85,6 +90,7 @@ public class QueryScraper implements BaseScraper {
         if (config.has("inherits")) {
             initImageQueries(config.getString("inherits"));
         }
+        this.tag = config.optString("tag", tag);
         this.imageQuery = config.optString("image", imageQuery);
         this.imageAttrQuery = config.optString("image_attr", imageAttrQuery.isEmpty() ? "src" : imageAttrQuery);
     }
@@ -94,15 +100,17 @@ public class QueryScraper implements BaseScraper {
         if (config.has("inherits")) {
             initSearchQueries(config.getString("inherits"));
         }
+        this.tag = config.optString("tag", tag);
         this.searchHrefQuery = config.optString("search_href", searchHrefQuery);
         this.searchLinkQuery = config.optString("search_link", searchLinkQuery);
         this.searchLinkAttrQuery = config.optString("search_link_attr", searchLinkAttrQuery.isEmpty() ? "href" : searchLinkAttrQuery);
         this.searchTitleQuery = config.optString("search_title", searchTitleQuery);
         this.searchImageQuery = config.optString("search_image", searchImageQuery);
         this.searchImageAttrQuery = config.optString("search_image_attr", searchImageAttrQuery.isEmpty() ? "src" : searchImageAttrQuery);
+        this.searchUpdatedQuery = config.optString("search_updated", searchUpdatedQuery);
     }
 
-    protected void getDocument(URL url) throws IOException {
+    protected void getDocument() throws IOException {
         doc = Jsoup.connect(url.toExternalForm())
                 .timeout(timeout)
                 .userAgent(MangaScraper.USER_AGENT)
@@ -143,9 +151,10 @@ public class QueryScraper implements BaseScraper {
 
     @Override
     public Manga parse(URL url, int timeout) throws Exception {
+        this.url = url;
         this.timeout = timeout;
 
-        getDocument(url);
+        getDocument();
 
         Manga manga = new Manga();
         try {
@@ -165,6 +174,7 @@ public class QueryScraper implements BaseScraper {
         manga.setAltTitles(altTitles(manga.getTitle()));
         manga.setGenres(genres());
         manga.setChapters(chapters());
+        manga.setUpdated(updated(manga.getChapters()));
 
         return manga;
     }
@@ -173,13 +183,18 @@ public class QueryScraper implements BaseScraper {
     public List<Manga> search(String hostname, String query, int timeout) throws Exception {
         initSearchQueries(hostname);
 
-        getDocument(new URL(String.format(searchHrefQuery, refactorQuery(query))));
+        this.url = new URL(String.format(searchHrefQuery, refactorQuery(query)));
+        getDocument();
 
         ArrayList<Manga> manga = new ArrayList<>();
 
         Elements links = doc.select(searchLinkQuery);
         Elements titles = doc.select(searchTitleQuery);
-        Elements images = doc.select(searchImageQuery);
+        Elements images = searchImages();
+        Elements updatedList = null;
+        if (!searchUpdatedQuery.isEmpty()) {
+            updatedList = doc.select(searchUpdatedQuery);
+        }
 
         for (int i = 0; i < links.size(); i++) {
             Element hrf = links.get(i);
@@ -187,10 +202,18 @@ public class QueryScraper implements BaseScraper {
             if (link.isEmpty()) {
                 link = hrf.attr(searchLinkAttrQuery);
             }
-            Element img = images.get(i);
-            String image = img.absUrl(searchImageAttrQuery);
-            if (image.isEmpty()) {
-                image = img.attr(searchImageAttrQuery);
+            String image = null;
+            if (i < images.size()) {
+                Element img = images.get(i);
+                image = img.absUrl(searchImageAttrQuery);
+                if (image.isEmpty()) {
+                    image = img.attr(searchImageAttrQuery);
+                }
+            }
+            long updated = 0;
+            if (updatedList != null && i < updatedList.size()) {
+                Element upd = updatedList.get(i);
+                updated = Utils.Parse.toTime(upd.ownText().toLowerCase());
             }
             String title = titles.get(i).ownText();
             Manga m = new Manga();
@@ -198,15 +221,21 @@ public class QueryScraper implements BaseScraper {
             m.setHostname(hostname);
             m.setTitle(title);
             m.setCover(image);
+            m.setUpdated(updated);
             manga.add(m);
         }
 
         return manga;
     }
 
+    protected Elements searchImages() {
+        return doc.select(searchImageQuery);
+    }
+
     @Override
     public List<String> images(URL url, int timeout) throws Exception {
-        getDocument(url);
+        this.url = url;
+        getDocument();
 
         initImageQueries(url.getHost());
 
@@ -257,6 +286,20 @@ public class QueryScraper implements BaseScraper {
         } else {
             return true;
         }
+    }
+
+    protected long updated(List<Chapter> chapters) {
+        long result = 0;
+        if (!updatedQuery.isEmpty()) {
+            Element first = doc.selectFirst(updatedQuery);
+            if (first != null) {
+                result = Utils.Parse.toTime(first.ownText().toLowerCase());
+            }
+        }
+        if (result < 1 && chapters != null && !chapters.isEmpty()) {
+            result = chapters.get(0).getPosted();
+        }
+        return result;
     }
 
     protected String description() {

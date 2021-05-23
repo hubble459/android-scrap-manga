@@ -191,7 +191,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
                 details.setGenres(arrayAsString(manga.getGenres()));
             }
             if (manga.getUpdated() > 0) {
-                details.setUpdated(Utils.Parse.toString(manga.getUpdated()));
+                details.setUpdated(Utils.Parse.toTimeString(manga.getUpdated()));
             }
 
             // Description

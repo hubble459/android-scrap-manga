@@ -20,8 +20,8 @@ import nl.hubble.scrapmanga.model.DatabaseContext;
 import nl.hubble.scrapmanga.model.Reading;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String TAG = "DatabaseHelper";
     public static final String DB_NAME = "manga.db";
+    private static final String TAG = "DatabaseHelper";
     private static final int VERSION = 1;
     private final String path;
 
@@ -308,6 +308,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public static boolean filled(Object object) {
+        boolean res = false;
+        if (object != null) {
+            res = true;
+            if (object instanceof String) {
+                res = !((String) object).isEmpty();
+            } else if (object instanceof Integer) {
+                res = ((Integer) object) != -1;
+            }
+        }
+        return res;
+    }
+
+    public static String arrayAsString(List<?> list) {
+        return list.toString().replaceAll("[\\[\\]]", "").replace(",", ";");
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         if (!db.isOpen()) {
@@ -361,23 +378,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.i(TAG, "onUpgrade: updating");
         }
         db.close();
-    }
-
-    public static boolean filled(Object object) {
-        boolean res = false;
-        if (object != null) {
-            res = true;
-            if (object instanceof String) {
-                res = !((String) object).isEmpty();
-            } else if (object instanceof Integer) {
-                res = ((Integer) object) != -1;
-            }
-        }
-        return res;
-    }
-
-    public static String arrayAsString(List<?> list) {
-        return list.toString().replaceAll("[\\[\\]]", "").replace(",", ";");
     }
 
     @Override

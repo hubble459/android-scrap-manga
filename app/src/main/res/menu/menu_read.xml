@@ -5,8 +5,8 @@
     <item
         android:id="@+id/openInBrowser"
         android:icon="@drawable/ic_open_in_browser_24px"
-        android:title="@string/open_in_browser"
         android:onClick="openInBrowser"
+        android:title="@string/open_in_browser"
         app:showAsAction="ifRoom" />
 
     <item

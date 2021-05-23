@@ -24,6 +24,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.GlideException;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
@@ -57,36 +58,39 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
     private ProgressBar loading;
     private boolean ignoreErrors;
     private boolean destroyed;
-    private final ImageUtil.ErrorListener errorListener = (e, url, imageView) -> {
-        if (destroyed) return;
+    private final ImageUtil.ErrorListener errorListener = new ImageUtil.ErrorListener() {
+        @Override
+        public void error(GlideException e, String url, ImageView imageView) {
+            if (destroyed) return;
 
-        DialogInterface.OnClickListener refresh = (dialog, which) -> {
-            ignoreErrors = false;
-            reload(chapter);
-        };
+            DialogInterface.OnClickListener refresh = (dialog, which) -> {
+                ignoreErrors = false;
+                ImageUtil.loadImage(imageView, url, this, referer, chapter.isDownloaded());
+            };
 
-        if (!ignoreErrors) {
-            ignoreErrors = true;
-            String error = null;
-            if (e != null) {
-                try {
-                    error = e.getRootCauses().get(0).getMessage();
-                } catch (Exception ex) {
-                    error = e.getMessage();
+            if (!ignoreErrors) {
+                ignoreErrors = true;
+                String error = null;
+                if (e != null) {
+                    try {
+                        error = e.getRootCauses().get(0).getMessage();
+                    } catch (Exception ex) {
+                        error = e.getMessage();
+                    }
                 }
-            }
 
-            if (error == null || error.isEmpty()) {
-                error = "N/A";
-            }
+                if (error == null || error.isEmpty()) {
+                    error = "N/A";
+                }
 
-            new MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.error)
-                    .setMessage("Url = " + url + "\nError = " + error)
-                    .setPositiveButton(R.string.refresh, refresh)
-                    .setNegativeButton(R.string.continue_reading, (dialog, which) -> ignoreErrors = false)
-                    .setOnDismissListener(dialog -> ignoreErrors = false)
-                    .show();
+                new MaterialAlertDialogBuilder(ReadActivity.this)
+                        .setTitle(R.string.error)
+                        .setMessage("Url = " + url + "\nError = " + error)
+                        .setPositiveButton(R.string.refresh, refresh)
+                        .setNegativeButton(R.string.continue_reading, (dialog, which) -> ignoreErrors = false)
+                        .setOnDismissListener(dialog -> ignoreErrors = false)
+                        .show();
+            }
         }
     };
 
@@ -192,7 +196,7 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
             setTitle(chapter.getTitle());
             ActionBar ab = getSupportActionBar();
             if (ab != null) {
-                ab.setSubtitle(Utils.Parse.toString(chapter.getPosted()));
+                ab.setSubtitle(Utils.Parse.toTimeString(chapter.getPosted()));
             }
 
             pv.init(this, manga, reading);

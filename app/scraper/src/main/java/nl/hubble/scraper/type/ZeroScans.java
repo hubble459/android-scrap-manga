@@ -1,7 +1,6 @@
 package nl.hubble.scraper.type;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.jsoup.Jsoup;
@@ -21,7 +20,7 @@ public class ZeroScans extends QueryScraper {
 
     @Override
     public String[] hostnames() {
-        return new String[]{"the-nonames", "reaperscans", "zeroscans"};
+        return new String[]{"the-nonames.com", "reaperscans.com", "zeroscans.com"};
     }
 
     @Override

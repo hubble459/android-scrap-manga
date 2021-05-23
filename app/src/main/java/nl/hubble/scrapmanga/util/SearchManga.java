@@ -1,5 +1,8 @@
 package nl.hubble.scrapmanga.util;
 
+import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.hubble.scraper.MangaScraper;
@@ -11,7 +14,7 @@ public class SearchManga extends Thread implements Runnable {
     private final String query;
     private final OnFinishedListener listener;
 
-    public SearchManga(MangaScraper scraper, String hostname, String query, OnFinishedListener listener) {
+    public SearchManga(MangaScraper scraper, @Nullable String hostname, String query, OnFinishedListener listener) {
         this.scraper = scraper;
         this.hostname = hostname;
         this.query = query;
@@ -22,7 +25,17 @@ public class SearchManga extends Thread implements Runnable {
     @Override
     public void run() {
         try {
-            listener.finished(scraper.search(hostname, query, 20000));
+            List<Manga> results;
+            if (hostname == null) {
+                ArrayList<String> searchEnginesNames = scraper.getSearchEnginesNames();
+                results = new ArrayList<>();
+                for (String searchEnginesName : searchEnginesNames) {
+                    results.addAll(scraper.search(searchEnginesName, query, 20000));
+                }
+            } else {
+                results = scraper.search(hostname, query, 20000);
+            }
+            listener.finished(results);
         } catch (Exception e) {
             e.printStackTrace();
             listener.error(e);
