@@ -1,5 +1,6 @@
 package nl.hubble.scrapmanga.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
@@ -90,6 +91,12 @@ public class SettingsActivity extends CustomActivity {
                 Spinner spinner = new Spinner(getContext(), Spinner.MODE_DIALOG);
                 spinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, new MangaScraper(getContext()).getEngineNames()));
                 spinner.performClick();
+                return true;
+            });
+
+            addListener(R.string.run_query, preference -> {
+                Intent intent = new Intent(requireContext(), QueryActivity.class);
+                startActivity(intent);
                 return true;
             });
         }

@@ -26,7 +26,7 @@
             app:useSimpleSummaryProvider="true" />
 
         <Preference
-            android:title="Reset queries"
+            android:title="@string/reset_queries_key"
             app:iconSpaceReserved="false"
             app:key="@string/reset_queries_key" />
     </PreferenceCategory>
@@ -44,5 +44,10 @@
             app:iconSpaceReserved="false"
             app:key="@string/supported_websites"
             app:title="@string/supported_websites" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="@string/run_query"
+            app:title="@string/run_query" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -20,6 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ScrapManga">
         <activity
+            android:name=".ui.QueryActivity"
+            android:label="@string/run_query"
+            android:parentActivityName=".ui.SettingsActivity" />
+        <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/settings"
             android:parentActivityName=".ui.MainActivity" />

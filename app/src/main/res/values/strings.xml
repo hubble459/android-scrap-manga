@@ -60,8 +60,7 @@
     <string name="already_exists">Already exists</string>
     <string name="lazy_load_default">lazy_load_default</string>
     <string name="use_lazy_load_default">Use Lazy Load by Default</string>
-    <string name="reset_queries_key">reset_queries</string>
-    <string name="reset_database_key">reset_database</string>
+    <string name="reset_queries_key">Reset Queries</string>
     <string name="download_database">Download Database</string>
     <string name="download_manga">Download</string>
     <string name="progress_count">%d/%d</string>
@@ -86,4 +85,7 @@
     <string name="manga_missing_data">Manga is missing important data</string>
     <string name="open">Open</string>
     <string name="supported_websites">Supported Websites</string>
+    <string name="run_query">Run Query</string>
+    <string name="sql_query">SQL Query</string>
+    <string name="execute">Execute</string>
 </resources>

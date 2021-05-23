@@ -18,6 +18,7 @@ import nl.hubble.scraper.model.Chapter;
 import nl.hubble.scraper.model.Manga;
 import nl.hubble.scrapmanga.model.DatabaseContext;
 import nl.hubble.scrapmanga.model.Reading;
+import nl.hubble.scrapmanga.ui.QueryActivity;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "manga.db";
@@ -39,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return context.getExternalFilesDir(null).getAbsolutePath();
     }
 
-    private static SQLiteDatabase getDatabase(Context context) {
+    public static SQLiteDatabase getDatabase(Context context) {
         return new DatabaseHelper(context).getWritableDatabase();
     }
 
