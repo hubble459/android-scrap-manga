@@ -11,7 +11,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,7 +57,7 @@ public class QueryScraper implements BaseScraper {
         this.context = context;
     }
 
-    private void initQueries(String hostname) throws Exception {
+    protected void initQueries(String hostname) throws Exception {
         JSONObject config = getConfig(hostname);
         if (config.has("inherits")) {
             initQueries(config.getString("inherits"));
@@ -151,16 +150,13 @@ public class QueryScraper implements BaseScraper {
 
     @Override
     public Manga parse(URL url, int timeout) throws Exception {
-        this.url = url;
         this.timeout = timeout;
+        this.url = url;
 
         getDocument();
 
         Manga manga = new Manga();
-        try {
-            url = new URL(doc.location());
-        } catch (MalformedURLException ignored) {
-        }
+        this.url = url = new URL(doc.location());
         manga.setHostname(url.getHost());
         manga.setHref(url.toString());
 

@@ -19,7 +19,6 @@ public class KissManga extends MangaNelo {
 
     @Override
     public List<String> images(URL url, int timeout) throws Exception {
-        Log.i("OWO", "images: " + "OMG");
         Document doc = Jsoup.parse(url, timeout);
 
         Element p = doc.selectFirst("#arraydata");

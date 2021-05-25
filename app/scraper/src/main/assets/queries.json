@@ -37,6 +37,10 @@
     "inherits": "mangakakalot.com",
     "search_href": "https://ww2.mangakakalots.com/search/%s"
   },
+  "ww.mangakakalot.tv": {
+    "inherits": "mangakakalot.com",
+    "search_href": "https://ww.mangakakalot.tv/search/%s"
+  },
   "manganelo.com": {
     "inherits": "mangakakalot.com",
     "status": "td:containsOwn(status) + *",
@@ -207,7 +211,7 @@
   },
   "mangakik.com": {
     "title": "h1",
-    "authors": "div.author-content a",
+    "authors": "div.author-content a, div.author-content",
     "genres": "div.genres-content a",
     "status": "div.summary-heading:has(> h5:contains(status)) + div",
     "alternative_titles": "div.summary-heading:has(> h5:contains(alt)) + div",
@@ -216,14 +220,14 @@
     "cover_attr": "data-src",
     "chapter_row": "li.wp-manga-chapter",
     "chapter_title": "a",
-    "chapter_posted": "span.chapter-release-date",
+    "chapter_posted": "span.chapter-release-date i",
     "chapter_href": "a",
-    "image": "img[id*=image-]",
+    "image": "div > img[id*=image-]",
     "image_attr": "data-src",
     "search_href": "https://mangakik.com/?post_type=wp-manga&s=%s",
     "search_link": "h3.h4 a",
     "search_title": "h3.h4 a",
-    "search_image": "div.tab-thumb.c-image-hover a img",
+    "search_image": "div.tab-thumb.c-image-hover a > img",
     "search_image_attr": "data-src",
     "search_updated": "div.meta-item.post-on span.font-meta"
   },
@@ -251,7 +255,8 @@
   },
   "1stkissmanga.com": {
     "inherits": "mangakik.com",
-    "cover_attr": "src",
+    "cover_attr": "data-lazy-src",
+    "image_attr": "data-lazy-src",
     "search_href": "https://1stkissmanga.com/?post_type=wp-manga&s=%s"
   },
   "mangafoxfull.com": {
@@ -303,5 +308,21 @@
   "azmanhwa.net": {
     "inherits": "mangakik.com",
     "search_href": "https://azmanhwa.net/?post_type=wp-manga&s=%s"
+  },
+  "topmanhua.com": {
+    "inherits": "mangakik.com",
+    "search_href": "https://topmanhua.com/?post_type=wp-manga&s=%s"
+  },
+  "mangafunny.com": {
+    "inherits": "mangakik.com",
+    "search_href": "https://mangafunny.com/?post_type=wp-manga&s=%s"
+  },
+  "mangatx.com": {
+    "inherits": "mangafoxfull.com",
+    "search_href": "https://mangatx.com/?post_type=wp-manga&s=%s"
+  },
+  "yaoi.mobi": {
+    "inherits": "mangakik.com",
+    "search_href": "https://mangatx.com/?post_type=wp-manga&s=%s"
   }
 }

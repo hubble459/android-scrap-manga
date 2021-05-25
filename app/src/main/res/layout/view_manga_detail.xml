@@ -82,6 +82,25 @@
     </TableRow>
 
     <TableRow
+        android:id="@+id/interval"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:width="100dp"
+            android:gravity="end"
+            android:text="@string/interval"
+            android:textColor="@color/colorPrimaryVariant" />
+
+        <TextView android:text="@string/colon_" />
+
+        <TextView
+            android:id="@+id/interval_text"
+            android:layout_weight=".5"
+            tools:text="Every day" />
+    </TableRow>
+
+    <TableRow
         android:id="@+id/updated"
         android:visibility="gone"
         tools:visibility="visible">
@@ -98,5 +117,24 @@
             android:id="@+id/updated_text"
             android:layout_weight=".5"
             tools:text="27/01/2021 3:25 PM" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/chapters"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:width="100dp"
+            android:gravity="end"
+            android:text="@string/chapters"
+            android:textColor="@color/colorPrimaryVariant" />
+
+        <TextView android:text="@string/colon_" />
+
+        <TextView
+            android:id="@+id/chapters_text"
+            android:layout_weight=".5"
+            tools:text="21" />
     </TableRow>
 </TableLayout>

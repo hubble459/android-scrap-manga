@@ -24,6 +24,10 @@
             android:label="@string/run_query"
             android:parentActivityName=".ui.SettingsActivity" />
         <activity
+            android:name=".ui.StatsActivity"
+            android:label="@string/statistics"
+            android:parentActivityName=".ui.MainActivity" />
+        <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/settings"
             android:parentActivityName=".ui.MainActivity" />

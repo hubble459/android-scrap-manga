@@ -12,6 +12,7 @@ public class Manga implements Serializable {
     private String description;
     private String href;
     private String cover;
+    private String interval;
     private boolean status;
     private long updated;
     private List<String> altTitles;
@@ -23,17 +24,18 @@ public class Manga implements Serializable {
     @Override
     public String toString() {
         return "Manga{" +
-                "hostname='" + getHostname() + '\'' +
-                ", title='" + getTitle() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", href='" + getHref() + '\'' +
-                ", img='" + getCover() + '\'' +
-                ", status=" + getStatus() +
-                ", updated=" + getUpdated() +
-                ", altTitles=" + getAltTitles() +
-                ", authors=" + getAuthors() +
-                ", genres=" + getGenres() +
-                ", chapters=" + getChapters() +
+                "hostname='" + hostname + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", href='" + href + '\'' +
+                ", img='" + cover + '\'' +
+                ", interval='" + interval + '\'' +
+                ", status=" + status +
+                ", updated=" + updated +
+                ", altTitles=" + altTitles +
+                ", authors=" + authors +
+                ", genres=" + genres +
+                ", chapters=" + chapters +
                 '}';
     }
 
@@ -83,6 +85,14 @@ public class Manga implements Serializable {
 
     public void setCover(String cover) {
         this.cover = cover;
+    }
+
+    public String getInterval() {
+        return interval;
+    }
+
+    public void setInterval(String interval) {
+        this.interval = interval;
     }
 
     public boolean getStatus() {

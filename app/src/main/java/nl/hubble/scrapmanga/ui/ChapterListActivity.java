@@ -71,7 +71,6 @@ public class ChapterListActivity extends CustomActivity implements AdapterView.O
             adapter.setOnCheckedChangeListener(() -> {
                 if (selectAll != null) {
                     int checked2 = getChecked();
-                    Log.i("OWO", "init: " + checked2 + "/" + adapter.getCount());
                     if (checked2 == 0) {
                         selectAll.setIcon(R.drawable.ic_check_box_unchecked_24px);
                         select = Select.UNCHECKED;

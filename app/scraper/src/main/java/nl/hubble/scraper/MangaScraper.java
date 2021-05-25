@@ -1,7 +1,12 @@
 package nl.hubble.scraper;
 
 import android.content.Context;
+import android.util.Log;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +25,7 @@ import nl.hubble.scraper.type.MngDoom;
 import nl.hubble.scraper.type.QueryScraper;
 import nl.hubble.scraper.type.WhimSubs;
 import nl.hubble.scraper.type.ZeroScans;
+import nl.hubble.scraper.util.Utils;
 
 /**
  * - MangaSushi
@@ -36,11 +42,22 @@ import nl.hubble.scraper.type.ZeroScans;
 public class MangaScraper {
     public static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36";
     private final ArrayList<BaseScraper> scrapers = new ArrayList<>();
+    private final Madara madara;
 
     public MangaScraper(Context context) {
         scrapers.add(new MangaKakalot(context));
         scrapers.add(new MangaNelo(context));
         scrapers.add(new KissManga(context));
+        this.madara = new Madara(context) {
+            @Override
+            protected void getDocument() {
+            }
+
+            @Override
+            protected void initQueries(String hostname) throws Exception {
+                super.initQueries("mangakik.com");
+            }
+        };
         scrapers.add(new Madara(context));
         scrapers.add(new MangaDex5(context));
         scrapers.add(new MangaStream(context));
@@ -61,10 +78,25 @@ public class MangaScraper {
             }
         }
         if (manga == null) {
-            throw new Exception(String.format("Website '%s' not supported (yet)", url.getHost()));
+            Document doc = Jsoup.connect(url.toExternalForm())
+                    .timeout(timeout)
+                    .userAgent(MangaScraper.USER_AGENT)
+                    .followRedirects(true)
+                    .get();
+            boolean isMadara = doc.getElementById("madara-comments") != null;
+            if (isMadara) {
+                manga = madara.parse(url, timeout, doc);
+            }
+
+            if (manga == null) {
+                throw new Exception(String.format("Website '%s' not supported (yet)", url.getHost()));
+            }
         }
         if (manga.getHostname() == null || manga.getHostname().isEmpty()) {
             manga.setHostname(url.getHost());
+        }
+        if (manga.getInterval() == null || manga.getInterval().isEmpty()) {
+            manga.setInterval(Utils.DifferenceCalculator.handle(manga));
         }
         if (manga.getHref() == null || manga.getHref().isEmpty()) {
             manga.setHref(url.toString());

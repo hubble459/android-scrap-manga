@@ -23,6 +23,8 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import nl.hubble.scraper.MangaScraper;
+import nl.hubble.scraper.model.Chapter;
+import nl.hubble.scraper.model.Manga;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -32,6 +34,7 @@ public class Utils {
         MANGADEX("yy-MM-dd k:m:s"),
         MANGAKAKALOT_1("MMM-dd-yy k:m"),
         MANGAKAKALOT_2("MMM-dd-yy"),
+        TOPMANHUA("MM/dd/yy"),
         MANGANELO_1("MMM dd,yy - k:m a"),
         MANGANELO_2("MMM dd,yy k:m"),
         WEBTOONS("MMM dd, yy"),
@@ -83,7 +86,11 @@ public class Utils {
                 ms = (long) n * 1000;
             }
 
-            return System.currentTimeMillis() - ms;
+            if (ms != 0) {
+                return System.currentTimeMillis() - ms;
+            } else {
+                return 0;
+            }
         }
 
         public static double convertToNumber(String text) {
@@ -255,6 +262,61 @@ public class Utils {
                 start = System.currentTimeMillis();
                 count = 0;
             }
+        }
+    }
+
+    public static class DifferenceCalculator {
+        public static long avgDifference(List<Chapter> chapters) {
+            if (chapters == null || chapters.size() != 1 && chapters.size() < 3) {
+                return 0;
+            } else {
+                long total = System.currentTimeMillis() - chapters.get(0).getPosted();
+                int size = chapters.size() - 1;
+                for (int i = 1; i < size; i++) {
+                    total += chapters.get(i).getPosted() - chapters.get(i + 1).getPosted();
+                }
+                return total / size;
+            }
+        }
+
+        public static String prettyInterval(long average) {
+            String[] numbers = new String[]{"two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
+
+            if (average < 1) {
+                return "Unknown";
+            } else if (average <= 3.6e6) {
+                return "Hourly";
+            } else if (average <= 8.64e7) {
+                return "Daily";
+            } else if (average <= 1.728e8) {
+                return "Every other day";
+            } else if (average <= 5.184e8) {
+                for (long i = 259200000L, j = 1; i <= 518400000L; i += 86400000L, j++) {
+                    if (average <= i) {
+                        return "Once every " + numbers[(int) j] + " days";
+                    }
+                }
+            } else if (average <= 6.048e8) {
+                return "Every week";
+            } else {
+                for (long i = 1209600000, j = 0; ; i += 6.048e8, j++) {
+                    if (average <= i) {
+                        String number;
+                        if (j < numbers.length) {
+                            number = numbers[(int) j];
+                        } else {
+                            number = String.valueOf(j + 1);
+                        }
+                        return "Every " + number + " months";
+                    }
+                }
+            }
+
+            return "Unknown";
+        }
+
+        public static String handle(Manga manga) {
+            return prettyInterval(avgDifference(manga.getChapters()));
         }
     }
 }

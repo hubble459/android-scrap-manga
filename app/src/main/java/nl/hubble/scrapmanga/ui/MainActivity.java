@@ -419,12 +419,12 @@ public class MainActivity extends CustomActivity {
                 });
 
 
+        MangaScraper ms = new MangaScraper(this);
         long now = System.currentTimeMillis();
         for (Reading reading : readingList) {
             if (reading.getTotalChapters() - reading.getChapter() <= 3 && now - reading.getRefreshed() > 10 * 60 * 1000 /*10 min*/) {
                 Thread t = new Thread(() -> {
                     try {
-                        MangaScraper ms = new MangaScraper(this);
                         Manga manga = ms.parse(new URL(reading.getHref()));
                         if (!isComplete(manga)) {
                             throw new Exception(getString(R.string.manga_missing_data));
@@ -488,6 +488,7 @@ public class MainActivity extends CustomActivity {
         reading.setTitle(manga.getTitle());
         reading.setHref(manga.getHref());
         reading.setTotalChapters(totalChapters);
+        reading.setRefreshed(System.currentTimeMillis());
 
         DatabaseHelper.updateManga(this, manga, reading.getId());
         DatabaseHelper.updateReading(this, reading);
@@ -500,6 +501,11 @@ public class MainActivity extends CustomActivity {
 
     public void searchOnline(MenuItem item) {
         Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
+    }
+
+    public void statistics(MenuItem item) {
+        Intent intent = new Intent(this, StatsActivity.class);
         startActivity(intent);
     }
 }

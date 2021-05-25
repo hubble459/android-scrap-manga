@@ -32,4 +32,10 @@
         android:onClick="settings"
         android:title="@string/settings"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/stats"
+        android:onClick="statistics"
+        android:title="@string/statistics"
+        app:showAsAction="never" />
 </menu>

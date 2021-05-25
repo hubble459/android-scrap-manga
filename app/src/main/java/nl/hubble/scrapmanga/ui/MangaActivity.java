@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -46,7 +45,7 @@ import nl.hubble.scrapmanga.util.LoadManga;
 import nl.hubble.scrapmanga.view.MangaDetailView;
 
 import static nl.hubble.scrapmanga.util.DatabaseHelper.arrayAsString;
-import static nl.hubble.scrapmanga.util.DatabaseHelper.filled;
+import static nl.hubble.scrapmanga.util.DatabaseHelper.notEmpty;
 
 public class MangaActivity extends CustomActivity implements LoadManga.OnFinishedListener {
     public static final String MANGA_KEY = "manga";
@@ -58,12 +57,14 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
     private ProgressBar loading;
     private TextView errorText;
     private long refreshTime = (long) 8.64e+7;
+    private boolean destroyed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manga);
 
+        destroyed = false;
         reading = (Reading) getIntent().getSerializableExtra(MainActivity.READING_KEY);
         retry = findViewById(R.id.retry);
         loading = findViewById(R.id.loading);
@@ -124,12 +125,18 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
     }
 
     private boolean isComplete(Manga manga) {
-        return filled(manga.getTitle()) && filled(manga.getHref()) && filled(manga.getHostname());
+        return notEmpty(manga.getTitle()) && notEmpty(manga.getHref()) && notEmpty(manga.getHostname());
+    }
+
+    @Override
+    protected void onDestroy() {
+        destroyed = true;
+        super.onDestroy();
     }
 
     @Override
     public void finished(Manga m) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed() || isFinishing() || m == null) {
+        if (destroyed || m == null) {
             return;
         }
 
@@ -165,7 +172,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             }
 
             // Cover
-            if (filled(manga.getCover())) {
+            if (notEmpty(manga.getCover())) {
                 ImageView cover = findViewById(R.id.cover);
                 GlideUrl url = new GlideUrl(manga.getCover(), new LazyHeaders.Builder()
                         .addHeader("Referer", manga.getHref())
@@ -190,8 +197,14 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             if (!manga.getGenres().isEmpty()) {
                 details.setGenres(arrayAsString(manga.getGenres()));
             }
+            if (manga.getInterval() != null) {
+                details.setInterval(manga.getInterval());
+            }
             if (manga.getUpdated() > 0) {
                 details.setUpdated(Utils.Parse.toTimeString(manga.getUpdated()));
+            }
+            if (manga.getChapters() != null) {
+                details.setChapters(manga.getChapters().size());
             }
 
             // Description

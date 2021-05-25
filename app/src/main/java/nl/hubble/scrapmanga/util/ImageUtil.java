@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
@@ -45,12 +46,15 @@ public class ImageUtil {
     private static boolean noReferer(String url) {
         String[] noReferer = new String[] {
                 "isekaiscan.com",
+                "1stkissmanga.com",
                 "zeroscans.com",
                 "the-nonames.com",
                 "manhuaus.com",
                 "manhwatop.com",
                 "mangahz.com",
-                "mangarockteam.com"
+                "mangarockteam.com",
+                "mangafunny.com",
+                "mangatx.com"
         };
         for (String host : noReferer) {
             if (url.contains(host)) {
@@ -60,7 +64,8 @@ public class ImageUtil {
         return false;
     }
 
-    public static void loadImage(ImageView image, String urlString, @Nullable ErrorListener errorListener, String referer, boolean local) {
+    public static void loadImage(ImageView image, @NonNull String urlString, @Nullable ErrorListener errorListener, String referer, boolean local) {
+        if (urlString.isEmpty()) return;
         GlideUrl url = null;
 
         RequestBuilder<Drawable> rb;

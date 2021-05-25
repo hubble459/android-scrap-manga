@@ -112,11 +112,7 @@ public class ReadActivity extends CustomActivity implements LoadChapter.OnFinish
         if (chapter != null && manga != null) {
             list = findViewById(R.id.list);
 
-            try {
-                referer = new URL(manga.getHref()).getHost();
-            } catch (MalformedURLException e) {
-                referer = manga.getHref();
-            }
+            referer = manga.getHref();
 
             reload(chapter);
         }

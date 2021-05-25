@@ -145,7 +145,7 @@ public class MangaScraperTest {
     @Test
     public void testWhimsubs() {
         Manga m = parse("https://whimsubs.xyz/r/series/shikkaku-kara-hajimeru-nariagari-madou-shidou/");
-        m.setDescription("owo");
+        m.setDescription("test");
         m.setAltTitles(List.of("test"));
         shouldBeComplete(m);
     }
@@ -267,6 +267,26 @@ public class MangaScraperTest {
     @Test
     public void testAZManhwa() {
         parseAndCheck("https://azmanhwa.net/manga/the-eunuchs-consort-rules-the-world/");
+    }
+
+    @Test
+    public void testTopManhua() {
+        parseAndCheck("https://topmanhua.com/manga/lightning-degree/");
+    }
+
+    @Test
+    public void testMangaFunny() {
+        parseAndCheck("https://mangafunny.com/manga/past-lives-of-the-thunder-god/");
+    }
+
+    @Test
+    public void testYaoiMobi() {
+        parseAndCheck("https://yaoi.mobi/manga/stack-overflow-raw-yaoi0003/");
+    }
+
+    @Test
+    public void testMangaTX() {
+        parseAndCheck("https://mangatx.com/manga/lightning-degree/");
     }
 
     public Manga parse(String url) {

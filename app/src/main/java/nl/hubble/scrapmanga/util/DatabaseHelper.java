@@ -96,6 +96,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             manga.setDescription(c.getString(c.getColumnIndex("description")));
             manga.setCover(c.getString(c.getColumnIndex("cover_url")));
             manga.setStatus(c.getInt(c.getColumnIndex("status")) == 1);
+            manga.setInterval(c.getString(c.getColumnIndex("interval")));
             manga.setUpdated(c.getLong(c.getColumnIndex("updated")));
             manga.setChapters(getChapters(context, db, manga));
         }
@@ -134,6 +135,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("alt_titles", listAsString(manga.getAltTitles()));
         cv.put("cover_url", manga.getCover());
         cv.put("status", manga.getStatus() ? 1 : 0);
+        cv.put("interval", manga.getInterval());
         cv.put("updated", manga.getUpdated());
         manga.setId(db.insert("manga", null, cv));
 
@@ -170,6 +172,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("alt_titles", listAsString(manga.getAltTitles()));
         cv.put("cover_url", manga.getCover());
         cv.put("status", manga.getStatus() ? 1 : 0);
+        cv.put("interval", manga.getInterval());
         cv.put("updated", manga.getUpdated());
         db.update("manga", cv, "manga_id IS ?", new String[]{String.valueOf(manga.getId())});
 
@@ -196,8 +199,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("alt_titles", listAsString(manga.getAltTitles()));
         cv.put("cover_url", manga.getCover());
         cv.put("status", manga.getStatus() ? 1 : 0);
+        cv.put("interval", manga.getInterval());
         cv.put("updated", manga.getUpdated());
         db.update("manga", cv, "reading_id IS ?", new String[]{String.valueOf(readingId)});
+
+        int mangaId = 0;
+        Cursor c = db.rawQuery("SELECT manga_id FROM MANGA WHERE reading_id IS ?", new String[]{String.valueOf(readingId)});
+        while (c.moveToNext()) {
+            mangaId = c.getInt(0);
+        }
+        c.close();
+        manga.setId(mangaId);
 
         db.delete("chapters", "manga_id IS ?", new String[]{String.valueOf(manga.getId())});
         for (Chapter chapter : manga.getChapters()) {
@@ -309,7 +321,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public static boolean filled(Object object) {
+    public static boolean notEmpty(Object object) {
         boolean res = false;
         if (object != null) {
             res = true;
@@ -351,8 +363,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "genres TEXT DEFAULT '', " +
                     "alt_titles TEXT DEFAULT '', " +
                     "cover_url TEXT DEFAULT '', " +
-                    "status INTEGER DEFAULT 0, " +
+                    "interval TEXT DEFAULT '', " +
                     "updated INTEGER DEFAULT 0, " +
+                    "status INTEGER DEFAULT 0, " +
                     "FOREIGN KEY (reading_id) " +
                     "REFERENCES reading (reading_id) " +
                     "ON UPDATE CASCADE " +

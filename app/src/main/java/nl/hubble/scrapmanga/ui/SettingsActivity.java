@@ -60,15 +60,12 @@ public class SettingsActivity extends CustomActivity {
                 FileUtil.Copy dt = new FileUtil.Copy(pathIn, pathOut, new FileUtil.DownloadListener() {
                     @Override
                     public void onFinish() {
-                        Looper.prepare();
-                        Toast.makeText(requireContext(), "Finished downloading!", Toast.LENGTH_SHORT).show();
+                        requireActivity().runOnUiThread(() -> Toast.makeText(requireContext(), "Finished downloading!", Toast.LENGTH_SHORT).show());
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        Looper.prepare();
-                        e.printStackTrace();
-                        Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        requireActivity().runOnUiThread(() -> Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
                     }
 
                     @Override
@@ -78,8 +75,7 @@ public class SettingsActivity extends CustomActivity {
 
                     @Override
                     public void cancelled() {
-                        Looper.prepare();
-                        Toast.makeText(requireContext(), "Cancelled!", Toast.LENGTH_SHORT).show();
+                        requireActivity().runOnUiThread(() -> Toast.makeText(requireContext(), "Cancelled!", Toast.LENGTH_SHORT).show());
                     }
                 });
                 dt.start();

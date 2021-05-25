@@ -88,4 +88,9 @@
     <string name="run_query">Run Query</string>
     <string name="sql_query">SQL Query</string>
     <string name="execute">Execute</string>
+    <string name="interval">Updates</string>
+    <string name="calculate_reading_time">Calculate Reading Time</string>
+    <string name="one_chapter">One chapter</string>
+    <string name="all_read_chapters">All read chapters</string>
+    <string name="statistics">Statistics</string>
 </resources>

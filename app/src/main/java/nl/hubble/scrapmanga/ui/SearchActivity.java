@@ -43,7 +43,7 @@ import nl.hubble.scrapmanga.view.MangaDetailView;
 
 import static nl.hubble.scrapmanga.ui.MainActivity.READING_KEY;
 import static nl.hubble.scrapmanga.util.DatabaseHelper.arrayAsString;
-import static nl.hubble.scrapmanga.util.DatabaseHelper.filled;
+import static nl.hubble.scrapmanga.util.DatabaseHelper.notEmpty;
 
 public class SearchActivity extends CustomActivity implements LoadManga.OnFinishedListener, SearchManga.OnFinishedListener {
     private EditText searchBar;
@@ -51,12 +51,14 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
     private String selectedHostname;
     private ListView list;
     private ProgressBar loading;
+    private boolean destroyed;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        destroyed = false;
         scraper = new MangaScraper(this);
 
         list = findViewById(R.id.list);
@@ -156,8 +158,39 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
         finished(manga, null);
     }
 
+    @Override
+    protected void onDestroy() {
+        this.destroyed = true;
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        this.destroyed = true;
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        this.destroyed = false;
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        this.destroyed = false;
+        super.onRestart();
+    }
+
     public void finished(Manga manga, final Reading rding) {
+        if (destroyed) {
+            return;
+        }
         runOnUiThread(() -> {
+            if (destroyed) {
+                return;
+            }
+
             loading(false);
             Reading[] reading = new Reading[]{rding};
 
@@ -171,13 +204,12 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             }
 
             // Cover
-            if (filled(manga.getCover())) {
-                ImageView cover = bsd.findViewById(R.id.cover);
-                if (cover != null) {
-                    cover.setVisibility(manga.getCover() == null ? View.GONE : View.VISIBLE);
-                    if (manga.getCover() != null) {
-                        ImageUtil.loadImage(cover, manga.getCover(), null, manga.getHref(), false);
-                    }
+            ImageView cover = bsd.findViewById(R.id.cover);
+            if (cover != null) {
+                boolean notEmpty = notEmpty(manga.getCover());
+                cover.setVisibility(notEmpty ? View.VISIBLE : View.GONE);
+                if (notEmpty) {
+                    ImageUtil.loadImage(cover, manga.getCover(), null, manga.getHref(), false);
                 }
             }
 
@@ -186,18 +218,24 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             if (details != null) {
                 details.setStatus(manga.getStatus() ? getString(R.string.ongoing) : getString(R.string.finished));
                 List<String> authors = manga.getAuthors();
-                if (!authors.isEmpty()) {
+                if (authors != null && !authors.isEmpty()) {
                     details.setAuthors(arrayAsString(authors.subList(0, Math.min(authors.size(), 3))));
                 }
                 List<String> altTitles = manga.getAltTitles();
-                if (!altTitles.isEmpty()) {
+                if (altTitles != null && !altTitles.isEmpty()) {
                     details.setAltTitles(arrayAsString(altTitles.subList(0, Math.min(altTitles.size(), 3))));
                 }
                 if (!manga.getGenres().isEmpty()) {
                     details.setGenres(arrayAsString(manga.getGenres()));
                 }
+                if (manga.getInterval() != null) {
+                    details.setInterval(manga.getInterval());
+                }
                 if (manga.getUpdated() > 0) {
                     details.setUpdated(Utils.Parse.toTimeString(manga.getUpdated()));
+                }
+                if (manga.getChapters() != null) {
+                    details.setChapters(manga.getChapters().size());
                 }
             }
 
@@ -205,7 +243,11 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
             TextView description = bsd.findViewById(R.id.description);
             if (description != null) {
                 String desc = manga.getDescription();
-                description.setText(String.format(Locale.getDefault(), "%s%s", desc.substring(0, Math.min(500, desc.length())), desc.length() > 500 ? "..." : ""));
+                if (notEmpty(desc)) {
+                    description.setText(String.format(Locale.getDefault(), "%s%s", desc.substring(0, Math.min(500, desc.length())), desc.length() > 500 ? "..." : ""));
+                } else {
+                    description.setVisibility(View.GONE);
+                }
             }
 
             // Read Button
@@ -218,6 +260,7 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
                     if (reading[0] == null) {
                         reading[0] = addReadingAndManga(manga);
                     }
+                    bsd.dismiss();
                     Intent intent = new Intent(this, MangaActivity.class);
                     intent.putExtra(READING_KEY, reading[0]);
                     startActivity(intent);
@@ -264,7 +307,10 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
 
     @Override
     public void error(Exception e) {
-        runOnUiThread(() -> Toast.makeText(SearchActivity.this, e.getMessage(), Toast.LENGTH_LONG).show());
+        runOnUiThread(() -> {
+            Toast.makeText(SearchActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            loading(false);
+        });
 
     }
 }

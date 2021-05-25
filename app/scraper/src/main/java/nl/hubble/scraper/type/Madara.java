@@ -1,19 +1,27 @@
 package nl.hubble.scraper.type;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 import nl.hubble.scraper.model.Chapter;
+import nl.hubble.scraper.model.Manga;
 
 public class Madara extends QueryScraper {
     public Madara(Context context) {
         super(context);
+    }
+
+    public Manga parse(URL url, int timeout, Document doc) throws Exception {
+        this.doc = doc;
+        return super.parse(url, timeout);
     }
 
     @Override
@@ -37,13 +45,16 @@ public class Madara extends QueryScraper {
                 "mangarockteam.com",
                 "mangazukiteam.com",
                 "azmanhwa.net",
+                "mangafunny.com",
+                "mangatx.com",
+                "yaoi.mobi",
         };
     }
 
     @Override
     protected List<Chapter> chapters() {
         try {
-            Element script = doc.selectFirst("#wp-manga-js-extra, input.rating-post-id");
+            Element script = doc.selectFirst("input.rating-post-id, #wp-manga-js-extra");
             String id;
             if (script.tagName().equals("script")) {
                 String data = script.data().split("\"manga_id\":\"", 2)[1];
@@ -51,46 +62,16 @@ public class Madara extends QueryScraper {
             } else {
                 id = script.attr("value");
             }
+
             doc = Jsoup
                     .connect(url.getProtocol() + "://" + url.getHost() + "/wp-admin/admin-ajax.php")
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .data("action", "manga_get_chapters")
                     .data("manga", id)
                     .post();
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
         return super.chapters();
-    }
-
-    private boolean isDoubleImages(String hostname) {
-        final String[] doubleImages = {
-                "mangahz.com",
-                "mangakik.com"
-        };
-        for (String doubleImage : doubleImages) {
-            if (hostname.equals(doubleImage)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    protected Elements searchImages() {
-        Elements elements = super.searchImages();
-        Elements filtered = new Elements();
-        if (isDoubleImages(url.getHost())) {
-            for (int i = 0; i < elements.size(); i++) {
-                if (i % 2 == 0) {
-                    filtered.add(elements.get(i));
-                }
-            }
-        } else {
-            filtered = elements;
-        }
-        return filtered;
     }
 }
