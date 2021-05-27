@@ -59,6 +59,13 @@
     "search_title": "div.search-story-item div.item-right h3 a.a-h.text-nowrap.item-title",
     "search_image": "div.search-story-item a.item-img img.img-loading"
   },
+  "manganato.com": {
+    "inherits": "manganelo.com",
+    "search_href": "https://manganato.com/search/story/%s"
+  },
+  "readmanganato.com": {
+    "inherits": "manganelo.com"
+  },
   "m.mangabat.com": {
     "inherits": "manganelo.com",
     "search_href": "https://m.mangabat.com/search/manga/%s",
@@ -189,7 +196,7 @@
     "chapter_title": "div span.left",
     "chapter_posted": "div span.right",
     "chapter_href": "$row",
-    "image": "section.read-comic div.content-comic.py-4 img",
+    "image": "section.read-comic div.content-comic img",
     "search_href": "https://mangafast.net/?s=%s",
     "search_link": "div.ls4v a[title]",
     "search_title": "a.text-truncate",

@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/add_manga"
+        android:onClick="addManga"
+        android:icon="@drawable/ic_add_24px"
+        android:title="@string/add_manga"
+        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/refresh"
         android:icon="@drawable/ic_refresh_24px"
@@ -16,26 +24,20 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/add_manga"
-        android:onClick="addManga"
-        android:title="@string/add_manga"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/search_online"
         android:onClick="searchOnline"
         android:title="@string/search_online"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/settings"
-        android:onClick="settings"
-        android:title="@string/settings"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/stats"
         android:onClick="statistics"
         android:title="@string/statistics"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/settings"
+        android:onClick="settings"
+        android:title="@string/settings"
         app:showAsAction="never" />
 </menu>

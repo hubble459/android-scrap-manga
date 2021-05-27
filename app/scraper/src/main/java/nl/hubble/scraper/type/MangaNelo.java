@@ -14,6 +14,6 @@ public class MangaNelo extends QueryScraper {
 
     @Override
     public String[] hostnames() {
-        return new String[]{"manganelo.com", "m.mangabat.com"};
+        return new String[]{"manganelo.com", "m.mangabat.com", "readmanganato.com", "manganato.com"};
     }
 }
