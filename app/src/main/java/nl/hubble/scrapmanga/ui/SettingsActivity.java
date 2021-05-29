@@ -3,14 +3,15 @@ package nl.hubble.scrapmanga.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Looper;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreference;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +52,15 @@ public class SettingsActivity extends CustomActivity {
                         requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show());
                     }
                 }).start();
+                return true;
+            });
+
+            addListener(R.string.dark_mode, preference -> {
+                if (((SwitchPreference) preference).isChecked()) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
                 return true;
             });
 

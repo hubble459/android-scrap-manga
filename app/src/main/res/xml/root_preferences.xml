@@ -1,5 +1,4 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.SettingsActivity">
 
@@ -26,28 +25,51 @@
             app:useSimpleSummaryProvider="true" />
 
         <Preference
-            android:title="@string/reset_queries_key"
+            app:title="@string/reset_queries_key"
             app:iconSpaceReserved="false"
-            app:key="@string/reset_queries_key" />
+            app:key="@string/reset_queries_key"
+            app:summary="@string/reset_queries_summary" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/chapters">
+
+        <SwitchPreference
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="@string/image_caching"
+            app:summaryOff="@string/image_caching_off"
+            app:summaryOn="@string/image_caching_on"
+            app:title="@string/image_caching" />
     </PreferenceCategory>
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
         app:title="Miscellaneous">
 
+        <SwitchPreference
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="@string/dark_mode"
+            app:title="@string/dark_mode" />
+
         <Preference
             app:iconSpaceReserved="false"
             app:key="@string/download_database"
+            app:summary="@string/download_database_summary"
             app:title="@string/download_database" />
 
         <Preference
             app:iconSpaceReserved="false"
+            app:summary="@string/supported_websites_summary"
             app:key="@string/supported_websites"
             app:title="@string/supported_websites" />
 
         <Preference
             app:iconSpaceReserved="false"
             app:key="@string/run_query"
+            app:summary="@string/run_query_summary"
             app:title="@string/run_query" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -151,24 +151,7 @@ public class MainActivity extends CustomActivity {
         }
     }
 
-    private boolean isNightModeEnabled() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean(getString(R.string.dark_mode), false);
-    }
 
-    public void toggleNightMode(MenuItem item) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean(getString(R.string.dark_mode), !item.isChecked());
-        editor.apply();
-
-        item.setChecked(!item.isChecked());
-        if (item.isChecked()) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
-    }
 
     public void addManga(MenuItem item) {
         LinearLayout layout = new LinearLayout(this);
@@ -374,8 +357,6 @@ public class MainActivity extends CustomActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem darkModeToggle = menu.findItem(R.id.dark_mode);
-        darkModeToggle.setChecked(isNightModeEnabled());
         return super.onCreateOptionsMenu(menu);
     }
 

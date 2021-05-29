@@ -1,6 +1,7 @@
 package nl.hubble.scrapmanga.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
@@ -44,7 +46,7 @@ public class ImageUtil {
     }
 
     private static boolean noReferer(String url) {
-        String[] noReferer = new String[] {
+        String[] noReferer = new String[]{
                 "isekaiscan.com",
                 "1stkissmanga.com",
                 "zeroscans.com",
@@ -86,14 +88,20 @@ public class ImageUtil {
             rb = rb.listener(createRequestListener(errorListener, local ? urlString : url.toStringUrl(), image));
         }
 
+        boolean caching = isCachingOn(image.getContext());
         rb
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.error)
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .dontTransform()
                 .encodeQuality(100)
+                .skipMemoryCache(!caching)
+                .diskCacheStrategy(caching ? DiskCacheStrategy.AUTOMATIC : DiskCacheStrategy.NONE)
                 .into(image);
+    }
+
+    private static boolean isCachingOn(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPref.getBoolean(context.getString(R.string.image_caching), false);
     }
 
     private static RequestListener<Drawable> createRequestListener(ErrorListener errorListener, String url, ImageView image) {

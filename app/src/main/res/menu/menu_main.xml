@@ -17,13 +17,6 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/dark_mode"
-        android:checkable="true"
-        android:onClick="toggleNightMode"
-        android:title="@string/dark_mode"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/search_online"
         android:onClick="searchOnline"
         android:title="@string/search_online"
