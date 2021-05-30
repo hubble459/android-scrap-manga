@@ -95,9 +95,6 @@ public class MangaScraper {
         if (manga.getHostname() == null || manga.getHostname().isEmpty()) {
             manga.setHostname(url.getHost());
         }
-        if (manga.getInterval() == null || manga.getInterval().isEmpty()) {
-            manga.setInterval(Utils.DifferenceCalculator.handle(manga));
-        }
         if (manga.getHref() == null || manga.getHref().isEmpty()) {
             manga.setHref(url.toString());
         }

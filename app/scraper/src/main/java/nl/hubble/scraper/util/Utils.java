@@ -230,9 +230,33 @@ public class Utils {
         }
 
         public static String toTimeString(long updated) {
-            if (updated <= 0) return "";
-            SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy K:mm a", Locale.US);
-            return dtf.format(new Date(updated));
+            if (updated <= 0) return "?";
+            long diff = System.currentTimeMillis() - updated;
+            if (diff <= 60000 /* 1 minute */) {
+                return "Just now";
+            } else if (diff <= 3.6e6 /* 1 hour */) {
+                for (long i = 2000, j = 2; i <= 3.6e6; i += 1000, j++) {
+                    if (diff <= i) {
+                        return (int) (j / 60) + " minutes ago";
+                    }
+                }
+            } else if (diff <= 8.64e7 /* 24 hours */) {
+                for (long i = 7200000, j = 2; i <= 8.64e7; i += 3.6e6, j++) {
+                    if (diff <= i) {
+                        return j + " hours ago";
+                    }
+                }
+            } else if (diff <= 6.048e+8 /* 1 week */) {
+                for (long i = 172800000, j = 2; i <= 6.048e+8; i += 8.64e7, j++) {
+                    if (diff <= i) {
+                        return j + " days ago";
+                    }
+                }
+            } else {
+                SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy K:mm a", Locale.US);
+                return dtf.format(new Date(updated));
+            }
+            return "?";
         }
     }
 
@@ -282,7 +306,7 @@ public class Utils {
         public static String prettyInterval(long average) {
             String[] numbers = new String[]{"two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
 
-            if (average < 1) {
+            if (average <= 0) {
                 return "Unknown";
             } else if (average <= 3.6e6) {
                 return "Hourly";

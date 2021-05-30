@@ -229,7 +229,7 @@
     "chapter_title": "a",
     "chapter_posted": "span.chapter-release-date i",
     "chapter_href": "a",
-    "image": "div > img[id*=image-]",
+    "image": "div > img[id*=image-], figure > img[class*=image-]",
     "image_attr": "data-src",
     "search_href": "https://mangakik.com/?post_type=wp-manga&s=%s",
     "search_link": "h3.h4 a",

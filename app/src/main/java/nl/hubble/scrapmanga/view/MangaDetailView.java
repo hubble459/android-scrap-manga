@@ -8,6 +8,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import nl.hubble.scraper.util.Utils;
 import nl.hubble.scrapmanga.R;
 
 /**
@@ -84,9 +85,9 @@ public class MangaDetailView extends TableLayout {
         }
     }
 
-    public void setInterval(String text) {
-        if (!text.isEmpty()) {
-            intervalTV.setText(text);
+    public void setInterval(long i) {
+        if (i != 0) {
+            intervalTV.setText(Utils.DifferenceCalculator.prettyInterval(i));
             interval.setVisibility(VISIBLE);
         } else {
             interval.setVisibility(GONE);

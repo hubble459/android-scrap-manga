@@ -228,7 +228,7 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
                 if (!manga.getGenres().isEmpty()) {
                     details.setGenres(arrayAsString(manga.getGenres()));
                 }
-                if (manga.getInterval() != null) {
+                if (manga.getInterval() != 0) {
                     details.setInterval(manga.getInterval());
                 }
                 if (manga.getUpdated() > 0) {

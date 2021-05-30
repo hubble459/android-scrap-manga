@@ -6,9 +6,9 @@ import android.content.ClipboardManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,13 +20,15 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.preference.PreferenceManager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import nl.hubble.scraper.MangaScraper;
 import nl.hubble.scraper.model.Manga;
@@ -35,6 +37,7 @@ import nl.hubble.scrapmanga.adapter.ReadingAdapter;
 import nl.hubble.scrapmanga.model.CustomActivity;
 import nl.hubble.scrapmanga.model.Reading;
 import nl.hubble.scrapmanga.util.DatabaseHelper;
+import nl.hubble.scrapmanga.util.FileUtil;
 import nl.hubble.scrapmanga.util.LoadManga;
 import nl.hubble.scrapmanga.view.LoadDialog;
 
@@ -62,6 +65,8 @@ public class MainActivity extends CustomActivity {
         list.setTextFilterEnabled(true);
 
         emptyText = findViewById(R.id.empty_text);
+
+//       if (exportOldDb()) return;
 
         reloadReading();
 
@@ -97,6 +102,49 @@ public class MainActivity extends CustomActivity {
 
         loading = findViewById(R.id.loading);
         dismiss = findViewById(R.id.dismiss);
+    }
+
+    private boolean exportOldDb() {
+        String oldDbPath = Objects.requireNonNull(getFilesDir().getParentFile()).getAbsolutePath() + File.separator + "databases" + File.separator + "manga.db";
+        Toast.makeText(this, oldDbPath, Toast.LENGTH_SHORT).show();
+        if (FileUtil.exists(oldDbPath)) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Old Database found...")
+                    .setMessage("\uD83D\uDE33")
+                    .setPositiveButton("SEND TO BLUE MAN", (dialog, which) -> {
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        emailIntent.setType("vnd.android.cursor.dir/email");
+                        String[] to = {"geraldd459@gmail.com"};
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+                        emailIntent.putExtra(Intent.EXTRA_STREAM, oldDbPath);
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
+                        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                    })
+                    .setNeutralButton("Download", (dialog, which) -> FileUtil.copy(oldDbPath, getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + "manga.db", new FileUtil.DownloadListener() {
+                        @Override
+                        public void onFinish() {
+                            runOnUiThread(() -> Toast.makeText(MainActivity.this, "Downloaded!", Toast.LENGTH_SHORT).show());
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            runOnUiThread(() -> Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show());
+                        }
+
+                        @Override
+                        public void progress(String file, int percent) {
+
+                        }
+
+                        @Override
+                        public void cancelled() {
+
+                        }
+                    }))
+                    .show();
+            return true;
+        }
+        return false;
     }
 
     private void confirmRemoveManga(Reading reading) {
@@ -150,8 +198,6 @@ public class MainActivity extends CustomActivity {
             clipboard.setPrimaryClip(clip);
         }
     }
-
-
 
     public void addManga(MenuItem item) {
         LinearLayout layout = new LinearLayout(this);
@@ -380,16 +426,11 @@ public class MainActivity extends CustomActivity {
     }
 
     private void refresh(List<Reading> readingList) {
-        List<Thread> threads = new ArrayList<>();
-
+        boolean[] canceled = new boolean[1];
         LoadDialog ld = new LoadDialog(this,
                 readingList.size(),
                 // Cancel
-                dialog -> {
-                    for (Thread thread : threads) {
-                        thread.interrupt();
-                    }
-                },
+                dialog -> canceled[0] = true,
                 // Retry
                 errors -> {
                     List<Reading> urlList = new ArrayList<>();
@@ -399,13 +440,13 @@ public class MainActivity extends CustomActivity {
                     refresh(urlList);
                 });
 
-
-        MangaScraper ms = new MangaScraper(this);
-        long now = System.currentTimeMillis();
-        for (Reading reading : readingList) {
-            if (reading.getTotalChapters() - reading.getChapter() <= 3 && now - reading.getRefreshed() > 10 * 60 * 1000 /*10 min*/) {
-                Thread t = new Thread(() -> {
+        new Thread(() -> {
+            MangaScraper ms = new MangaScraper(this);
+            long now = System.currentTimeMillis();
+            for (Reading reading : readingList) {
+                if (!canceled[0] && reading.getTotalChapters() - reading.getChapter() <= 3 && now - reading.getRefreshed() >= 600000 /*10 min*/) {
                     try {
+                        runOnUiThread(() -> ld.setCurrentTask(reading.getTitle()));
                         Manga manga = ms.parse(new URL(reading.getHref()));
                         if (!isComplete(manga)) {
                             throw new Exception(getString(R.string.manga_missing_data));
@@ -415,28 +456,13 @@ public class MainActivity extends CustomActivity {
                     } catch (Exception e) {
                         runOnUiThread(() -> ld.addError(reading.getTitle(), e.getMessage(), reading));
                     }
-                    runOnUiThread(ld::increaseCount);
-                });
-                t.start();
-                threads.add(t);
-            } else {
-                ld.increaseCount();
-            }
-        }
-
-        new Thread(() -> {
-            for (Thread thread : threads) {
-                try {
-                    if (!thread.isInterrupted()) {
-                        thread.join();
-                    }
-                } catch (InterruptedException ignored) {
                 }
+                runOnUiThread(ld::increaseCount);
             }
-
             runOnUiThread(() -> {
                 ld.done();
                 load(false);
+                reloadReading();
             });
         }).start();
     }

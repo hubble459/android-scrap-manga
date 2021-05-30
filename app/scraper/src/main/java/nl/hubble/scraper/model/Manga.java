@@ -5,6 +5,8 @@ import androidx.annotation.NonNull;
 import java.io.Serializable;
 import java.util.List;
 
+import nl.hubble.scraper.util.Utils;
+
 public class Manga implements Serializable {
     private long id;
     private String hostname;
@@ -12,7 +14,6 @@ public class Manga implements Serializable {
     private String description;
     private String href;
     private String cover;
-    private String interval;
     private boolean status;
     private long updated;
     private List<String> altTitles;
@@ -29,7 +30,6 @@ public class Manga implements Serializable {
                 ", description='" + description + '\'' +
                 ", href='" + href + '\'' +
                 ", img='" + cover + '\'' +
-                ", interval='" + interval + '\'' +
                 ", status=" + status +
                 ", updated=" + updated +
                 ", altTitles=" + altTitles +
@@ -87,12 +87,8 @@ public class Manga implements Serializable {
         this.cover = cover;
     }
 
-    public String getInterval() {
-        return interval;
-    }
-
-    public void setInterval(String interval) {
-        this.interval = interval;
+    public long getInterval() {
+        return Utils.DifferenceCalculator.avgDifference(chapters);
     }
 
     public boolean getStatus() {

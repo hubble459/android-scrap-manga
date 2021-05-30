@@ -24,11 +24,19 @@
             app:title="@string/auto_refresh_time"
             app:useSimpleSummaryProvider="true" />
 
+        <SwitchPreference
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="@string/progress_number"
+            app:summaryOff="@string/progress_number_off"
+            app:summaryOn="@string/progress_number_on"
+            app:title="@string/progress_number" />
+
         <Preference
-            app:title="@string/reset_queries_key"
             app:iconSpaceReserved="false"
             app:key="@string/reset_queries_key"
-            app:summary="@string/reset_queries_summary" />
+            app:summary="@string/reset_queries_summary"
+            app:title="@string/reset_queries_key" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -62,8 +70,8 @@
 
         <Preference
             app:iconSpaceReserved="false"
-            app:summary="@string/supported_websites_summary"
             app:key="@string/supported_websites"
+            app:summary="@string/supported_websites_summary"
             app:title="@string/supported_websites" />
 
         <Preference

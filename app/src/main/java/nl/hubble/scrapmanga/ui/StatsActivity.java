@@ -82,19 +82,16 @@ public class StatsActivity extends CustomActivity {
         mangaStats.setUnread(unread);
 
         // Queries
-        totalCursor = db.rawQuery("SELECT sum(total_chapters) FROM reading", null);
+        totalCursor = db.rawQuery("SELECT sum(total_chapters), sum(chapter) FROM reading", null);
         totalCursor.moveToNext();
-        readCursor = db.rawQuery("SELECT sum(chapter) FROM reading", null);
-        readCursor.moveToNext();
 
         // Vars
         total = totalCursor.getInt(0);
-        totalChapsRead = readCursor.getInt(0);
+        totalChapsRead = totalCursor.getInt(1);
         unread = total - totalChapsRead;
 
         // Close
         totalCursor.close();
-        readCursor.close();
 
         // Use
         StatBarView chaptersStats = findViewById(R.id.chaptersStats);

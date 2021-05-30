@@ -100,4 +100,7 @@
     <string name="image_caching">Cache Images</string>
     <string name="image_caching_on">Images will be kept cached.\nmiGht crAsh yoUr phOne on WebTooNs</string>
     <string name="image_caching_off">Images will not be cached.\nThis means that every time you reload, the image will have to be fetched from the web again</string>
+    <string name="progress_number">Progress Number</string>
+    <string name="progress_number_on">Show number</string>
+    <string name="progress_number_off">Show chapter</string>
 </resources>

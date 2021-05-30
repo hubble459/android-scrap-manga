@@ -105,9 +105,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
         if (readingProgress != null && readingProgress.getProgress() != value) {
             readingProgress.setProgress(value);
         }
-        if (number != null) {
-            number.setText(String.valueOf(value));
-        }
+        updateNumber();
     }
 
     private void loadManga(boolean force) {
@@ -186,6 +184,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             }
 
             // Details
+            List<Chapter> chapters = manga.getChapters();
             MangaDetailView details = findViewById(R.id.details);
             details.setStatus(manga.getStatus() ? getString(R.string.ongoing) : getString(R.string.finished));
             if (!manga.getAuthors().isEmpty()) {
@@ -197,14 +196,14 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             if (!manga.getGenres().isEmpty()) {
                 details.setGenres(arrayAsString(manga.getGenres()));
             }
-            if (manga.getInterval() != null) {
+            if (manga.getInterval() != 0) {
                 details.setInterval(manga.getInterval());
             }
             if (manga.getUpdated() > 0) {
                 details.setUpdated(Utils.Parse.toTimeString(manga.getUpdated()));
             }
-            if (manga.getChapters() != null) {
-                details.setChapters(manga.getChapters().size());
+            if (chapters != null) {
+                details.setChapters(chapters.size());
             }
 
             // Description
@@ -214,11 +213,17 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
 
             // Seekbar and Number
             TextView total = findViewById(R.id.total_chapters);
-            total.setText(String.valueOf(reading.getTotalChapters()));
             number = findViewById(R.id.current_chapter);
             readingProgress = findViewById(R.id.current_chapter_progress);
 
-            number.setText(String.valueOf(reading.getChapter()));
+            boolean showNumber = isShowNumber(false);
+
+            if (chapters != null) {
+                total.setText(String.valueOf(showNumber ? reading.getTotalChapters() : chapters.get(0).getNumber()));
+            } else {
+                total.setText(String.valueOf(reading.getTotalChapters()));
+            }
+            updateNumber(showNumber);
             readingProgress.setMax(reading.getTotalChapters());
             readingProgress.setProgress(reading.getChapter());
 
@@ -226,6 +231,24 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
 
             stopLoading();
         });
+    }
+
+    private void updateNumber() {
+        updateNumber(isShowNumber(true));
+    }
+
+    private void updateNumber(boolean showNumber) {
+        if (number != null) {
+            number.setText(String.valueOf(showNumber ? reading.getChapter() : manga.getChapters().get(reading.getTotalChapters() - reading.getChapter()).getNumber()));
+        }
+    }
+
+    private boolean isShowNumber(boolean cantBeZero) {
+        if (manga == null || manga.getChapters() == null || (cantBeZero && reading.getChapter() == 0)) {
+            return true;
+        }
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean(getString(R.string.progress_number), true);
     }
 
     private void stopLoading() {
@@ -247,7 +270,18 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
 
     public void changeCurrent(View view) {
         NumberPicker np = new NumberPicker(this);
+        List<Chapter> chapters = manga.getChapters();
+        np.setMinValue(0);
         np.setMaxValue(reading.getTotalChapters());
+        if (!isShowNumber(false)) {
+            String[] values = new String[reading.getTotalChapters() + 1];
+            values[0] = "0";
+            for (int i = chapters.size() - 1, j = 1; i >= 0; i--, j++) {
+                values[j] = String.valueOf(chapters.get(i).getNumber());
+
+            }
+            np.setDisplayedValues(values);
+        }
         np.setValue(reading.getChapter());
 
         new AlertDialog.Builder(this)
@@ -312,7 +346,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             if (reading != null) {
                 this.reading = reading;
                 readingProgress.setProgress(reading.getChapter());
-                number.setText(String.valueOf(reading.getChapter()));
+                updateNumber();
             }
         }
     }
