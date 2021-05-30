@@ -248,7 +248,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             return true;
         }
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean(getString(R.string.progress_number), true);
+        return sharedPref.getBoolean(getString(R.string.progress_number), false);
     }
 
     private void stopLoading() {
