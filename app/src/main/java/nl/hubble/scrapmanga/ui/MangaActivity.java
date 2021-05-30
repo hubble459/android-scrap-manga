@@ -207,9 +207,11 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             }
 
             // Description
-            findViewById(R.id.desc_title).setVisibility(View.VISIBLE);
-            TextView description = findViewById(R.id.description);
-            description.setText(manga.getDescription());
+            if (manga.getDescription() != null && !manga.getDescription().isEmpty()) {
+                findViewById(R.id.desc_title).setVisibility(View.VISIBLE);
+                TextView description = findViewById(R.id.description);
+                description.setText(manga.getDescription());
+            }
 
             // Seekbar and Number
             TextView total = findViewById(R.id.total_chapters);

@@ -219,11 +219,11 @@ public class SearchActivity extends CustomActivity implements LoadManga.OnFinish
                 details.setStatus(manga.getStatus() ? getString(R.string.ongoing) : getString(R.string.finished));
                 List<String> authors = manga.getAuthors();
                 if (authors != null && !authors.isEmpty()) {
-                    details.setAuthors(arrayAsString(authors.subList(0, Math.min(authors.size(), 3))));
+                    details.setAuthors(authors.get(0));
                 }
                 List<String> altTitles = manga.getAltTitles();
                 if (altTitles != null && !altTitles.isEmpty()) {
-                    details.setAltTitles(arrayAsString(altTitles.subList(0, Math.min(altTitles.size(), 3))));
+                    details.setAltTitles(altTitles.get(0));
                 }
                 if (!manga.getGenres().isEmpty()) {
                     details.setGenres(arrayAsString(manga.getGenres()));

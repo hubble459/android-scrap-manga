@@ -1,5 +1,7 @@
 {
   "lhtranslation.net": {
+    "normalize_title": true,
+    "normalize_chapter": true,
     "title": "h1",
     "status": "a[href=/manga-on-going.html], a[href=/manga-going.html]",
     "description": "div.row:has(h3) p:contains( )",
@@ -88,6 +90,8 @@
     "cover": "div.cover-detail img"
   },
   "isekaiscan.com": {
+    "normalize_title": true,
+    "normalize_chapter": true,
     "inherits": "mangakakalot.com",
     "cover": "div.summary_image img",
     "cover_attr": "data-src",

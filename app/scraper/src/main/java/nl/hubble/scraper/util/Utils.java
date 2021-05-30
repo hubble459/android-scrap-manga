@@ -164,6 +164,56 @@ public class Utils {
             Log.i(TAG, "readQueryFile: html file created");
         }
 
+        public static String toNormalCase(String sentence) {
+            if (sentence == null || sentence.isEmpty()) return sentence;
+            sentence = sentence.toLowerCase().trim();
+            String[] words = sentence.split(" ");
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < words.length; i++) {
+                String word = words[i];
+                if (word.length() >= 1) {
+                    char firstLetter = word.charAt(0);
+                    if (i == 0 || needsUpperCase(word)) {
+                        firstLetter = Character.toUpperCase(firstLetter);
+                    }
+
+                    String newWord = firstLetter + word.substring(1);
+                    sb.append(newWord).append(" ");
+                }
+            }
+            return sb.toString().trim();
+        }
+
+        private static boolean needsUpperCase(String word) {
+            switch (word) {
+                case "ni":
+                case "o":
+                case "wo":
+                case "no":
+                case "to":
+                case "node":
+                case "suru":
+                case "ha":
+                case "wa":
+                case "ga":
+                case "ka":
+                case "the":
+                case "de":
+                case "mo":
+                case "aru":
+                case "ore":
+                case "yori":
+                case "of":
+                case "deshita":
+                case "kara":
+                case "tte":
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
         public static String toHTML(List<String> images, boolean lazy, int width, int height) {
             StringBuilder sb = new StringBuilder();
             sb.append("<html>\n");

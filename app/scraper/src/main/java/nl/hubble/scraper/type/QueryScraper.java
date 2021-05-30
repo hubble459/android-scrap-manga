@@ -22,12 +22,14 @@ import nl.hubble.scraper.model.Manga;
 import nl.hubble.scraper.util.Utils;
 
 public class QueryScraper implements BaseScraper {
-    protected static final String SPLIT_REGEX = "(, | ?; | : | - )";
+    protected static final String SPLIT_REGEX = "(, ?| ?; ?| : | - )";
     protected Context context;
     protected int timeout;
     protected Document doc;
     protected URL url;
     protected String tag = "";
+    protected boolean normalizeTitle = false;
+    protected boolean normalizeChapter = false;
     protected String titleQuery = "";
     protected String statusQuery = "";
     protected String updatedQuery = "";
@@ -63,6 +65,8 @@ public class QueryScraper implements BaseScraper {
             initQueries(config.getString("inherits"));
         }
         this.tag = config.optString("tag", tag);
+        this.normalizeTitle = config.optBoolean("normalize_title", false);
+        this.normalizeChapter = config.optBoolean("normalize_chapter", false);
         this.titleQuery = config.optString("title", titleQuery);
         this.statusQuery = config.optString("status", statusQuery);
         this.updatedQuery = config.optString("updated", updatedQuery);
@@ -100,6 +104,7 @@ public class QueryScraper implements BaseScraper {
             initSearchQueries(config.getString("inherits"));
         }
         this.tag = config.optString("tag", tag);
+        this.normalizeTitle = config.optBoolean("normalize_title", false);
         this.searchHrefQuery = config.optString("search_href", searchHrefQuery);
         this.searchLinkQuery = config.optString("search_link", searchLinkQuery);
         this.searchLinkAttrQuery = config.optString("search_link_attr", searchLinkAttrQuery.isEmpty() ? "href" : searchLinkAttrQuery);
@@ -163,6 +168,9 @@ public class QueryScraper implements BaseScraper {
         initQueries(manga.getHostname());
 
         manga.setTitle(title());
+        if (normalizeTitle) {
+            manga.setTitle(Utils.Parse.toNormalCase(manga.getTitle()));
+        }
         manga.setStatus(status());
         manga.setDescription(description());
         manga.setCover(cover());
@@ -216,6 +224,9 @@ public class QueryScraper implements BaseScraper {
             m.setHref(link);
             m.setHostname(hostname);
             m.setTitle(title);
+            if (normalizeTitle) {
+                m.setTitle(Utils.Parse.toNormalCase(m.getTitle()));
+            }
             m.setCover(image);
             m.setUpdated(updated);
             manga.add(m);
@@ -420,6 +431,9 @@ public class QueryScraper implements BaseScraper {
                     Element title = chapElement.selectFirst(chapterTitleQuery);
                     if (title != null) {
                         chapter.setTitle(title.ownText());
+                        if (normalizeChapter) {
+                            chapter.setTitle(Utils.Parse.toNormalCase(chapter.getTitle()));
+                        }
                     } else {
                         continue;
                     }

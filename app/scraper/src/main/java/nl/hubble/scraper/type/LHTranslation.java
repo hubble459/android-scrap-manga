@@ -40,7 +40,7 @@ public class LHTranslation extends QueryScraper {
             JSONObject result = data.getJSONObject(i);
             Manga manga = new Manga();
             manga.setHostname(hostname);
-            manga.setTitle(result.getString("primary"));
+            manga.setTitle(Utils.Parse.toNormalCase(result.getString("primary")));
             manga.setCover(result.getString("image"));
             String script = result.getString("onclick");
             String href = "https://lhtranslation.net/" + script.substring("window.location='".length(), script.length() - 1);

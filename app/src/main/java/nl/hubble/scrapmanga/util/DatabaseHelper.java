@@ -331,7 +331,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public static String arrayAsString(List<?> list) {
-        return list.toString().replaceAll("[\\[\\]]", "").replace(",", ";");
+        return list.toString().replaceAll("[\\[\\]]", "").replace(",", "; ");
     }
 
     @Override
