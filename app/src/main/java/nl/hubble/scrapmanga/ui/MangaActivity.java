@@ -223,7 +223,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             } else {
                 total.setText(String.valueOf(reading.getTotalChapters()));
             }
-            updateNumber(showNumber);
+            updateNumber();
             readingProgress.setMax(reading.getTotalChapters());
             readingProgress.setProgress(reading.getChapter());
 
