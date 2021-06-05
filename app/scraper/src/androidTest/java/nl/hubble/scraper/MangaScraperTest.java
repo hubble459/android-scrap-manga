@@ -71,6 +71,14 @@ public class MangaScraperTest {
     }
 
     @Test
+    public void testManganato() {
+        Manga m = parse("https://readmanganato.com/manga-lb989110");
+        m.setAltTitles(List.of("test"));
+        Log.e("OWO", "testManganato: " + m.getChapters().get(0).getPosted());
+        shouldBeComplete(m);
+    }
+
+    @Test
     public void testMangaBat() {
         parseAndCheck("https://m.mangabat.com/read-nh391726");
     }

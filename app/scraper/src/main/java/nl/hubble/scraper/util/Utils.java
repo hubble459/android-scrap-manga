@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import nl.hubble.scraper.MangaScraper;
 import nl.hubble.scraper.model.Chapter;
@@ -58,6 +60,7 @@ public class Utils {
         private static final String TAG = "ParseUtil";
 
         public static long toTime(String text) {
+            text = text.trim();
             for (DateFormat format : DateFormat.values()) {
                 try {
                     Date date = new SimpleDateFormat(format.toString(), Locale.getDefault()).parse(text);
@@ -67,51 +70,72 @@ public class Utils {
                 }
             }
 
-            long ms = 0;
-            // get number from string
-            int n = (int) convertToNumber(text);
-            if (text.matches("(\\W|\\d)+y.*")) {
-                ms = (long) (n * 3.154e+10);
-            } else if (text.matches("(\\W|\\d)+mo.*")) {
-                ms = (long) (n * 2.628e+9);
-            } else if (text.matches("(\\W|\\d)+w.*")) {
-                ms = (long) (n * 6.048e+8);
-            } else if (text.matches("(\\W|\\d)+d.*")) {
-                ms = (long) (n * 8.64e+7);
-            } else if (text.matches("(\\W|\\d)+h.*")) {
-                ms = (long) (n * 3.6e+6);
-            } else if (text.matches("(\\W|\\d)+m.*")) {
-                ms = (long) n * 60000;
-            } else if (text.matches("(\\W|\\d)+s.*")) {
-                ms = (long) n * 1000;
+            if (text.matches(".*(now|hot|new).*")) {
+                return System.currentTimeMillis();
             }
 
-            if (ms != 0) {
-                return System.currentTimeMillis() - ms;
-            } else {
-                return 0;
+            Pattern r = Pattern.compile("(\\d+)");
+            Matcher m = r.matcher(text);
+            if (m.find()) {
+                String number = m.group(0);
+                if (number != null) {
+                    long ms = 0;
+                    int n = Integer.parseInt(number);
+                    if (text.matches("(\\W|\\d)+y.*")) {
+                        ms = (long) (n * 3.154e10);
+                    } else if (text.matches("(\\W|\\d)+mo.*")) {
+                        ms = (long) (n * 2.628e9);
+                    } else if (text.matches("(\\W|\\d)+w.*")) {
+                        ms = (long) (n * 6.048e8);
+                    } else if (text.matches("(\\W|\\d)+d.*")) {
+                        ms = (long) (n * 8.64e7);
+                    } else if (text.matches("(\\W|\\d)+h.*")) {
+                        ms = (long) (n * 3.6e6);
+                    } else if (text.matches("(\\W|\\d)+m.*")) {
+                        ms = (long) n * 60000;
+                    } else if (text.matches("(\\W|\\d)+s.*")) {
+                        ms = (long) n * 1000;
+                    }
+                    if (ms != 0) {
+                        return System.currentTimeMillis() - ms;
+                    } else {
+                        return 0;
+                    }
+                }
             }
+            return 0;
         }
 
         public static double convertToNumber(String text) {
             if (text.isEmpty()) return -1;
 
+            Pattern r = Pattern.compile("Ch(ap(ter)?)? ?(\\d+(\\.\\d+)?)");
+            Matcher m = r.matcher(text);
+            if (m.find()) {
+                String number = m.group(3);
+                if (number != null && number.matches("[\\d.]+")) {
+                    return Double.parseDouble(number);
+                }
+            }
+
             text = text
                     .trim()
                     .replace(" ", "")
-                    .replaceAll("Vol\\w*\\.\\d+", "")
+                    .replaceAll("Vol\\w*\\.?[\\d.]+", "")
                     .replaceAll("[,-]", ".")
                     .replaceAll("[^\\d.]", "");
 
             boolean dotted = false;
+            boolean canDot = false;
             StringBuilder sb = new StringBuilder();
             for (char c : text.toCharArray()) {
                 if (c == '.') {
-                    if (!dotted) {
+                    if (canDot && !dotted) {
                         dotted = true;
                         sb.append(c);
                     }
                 } else {
+                    canDot = true;
                     sb.append(c);
                 }
             }
@@ -119,7 +143,7 @@ public class Utils {
             try {
                 d = Double.parseDouble(sb.toString());
             } catch (NumberFormatException e) {
-                System.err.println("Double Parse: " + e.getMessage());
+                Log.i(TAG, "convertToNumber: Double Parse: " + e.getMessage());
             }
             return d;
         }
@@ -281,7 +305,8 @@ public class Utils {
 
         public static String toTimeString(long updated) {
             if (updated <= 0) return "?";
-            long diff = System.currentTimeMillis() - updated;
+            updated = (long) (Math.floor(updated / 1000D) * 1000);
+            long diff = System.currentTimeMillis() - updated - 5000;
             if (diff <= 60000 /* 1 minute */) {
                 return "Just now";
             } else if (diff <= 3.6e6 /* 1 hour */) {
@@ -344,9 +369,9 @@ public class Utils {
             if (chapters == null || chapters.size() != 1 && chapters.size() < 3) {
                 return 0;
             } else {
-                long total = System.currentTimeMillis() - chapters.get(0).getPosted();
+                long total = 0;
                 int size = chapters.size() - 1;
-                for (int i = 1; i < size; i++) {
+                for (int i = 0; i < size; i++) {
                     total += chapters.get(i).getPosted() - chapters.get(i + 1).getPosted();
                 }
                 return total / size;

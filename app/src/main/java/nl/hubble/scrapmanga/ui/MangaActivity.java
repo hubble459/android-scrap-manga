@@ -186,7 +186,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             // Details
             List<Chapter> chapters = manga.getChapters();
             MangaDetailView details = findViewById(R.id.details);
-            details.setStatus(manga.getStatus() ? getString(R.string.ongoing) : getString(R.string.finished));
+
             if (!manga.getAuthors().isEmpty()) {
                 details.setAuthors(arrayAsString(manga.getAuthors()));
             }
@@ -196,9 +196,18 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
             if (!manga.getGenres().isEmpty()) {
                 details.setGenres(arrayAsString(manga.getGenres()));
             }
-            if (manga.getInterval() != 0) {
-                details.setInterval(manga.getInterval());
+            String dropped = "";
+            long interval = manga.getInterval();
+            if (interval != 0) {
+                if (manga.getStatus() && chapters != null && !chapters.isEmpty()) {
+                    long diff = System.currentTimeMillis() - chapters.get(0).getPosted();
+                    if (diff / interval > 3) {
+                        dropped = " (dropped?)";
+                    }
+                }
+                details.setInterval(interval);
             }
+            details.setStatus(manga.getStatus() ? getString(R.string.ongoing) + dropped : getString(R.string.finished));
             if (manga.getUpdated() > 0) {
                 details.setUpdated(Utils.Parse.toTimeString(manga.getUpdated()));
             }
@@ -220,7 +229,7 @@ public class MangaActivity extends CustomActivity implements LoadManga.OnFinishe
 
             boolean showNumber = isShowNumber(false);
 
-            if (chapters != null) {
+            if (chapters != null && !chapters.isEmpty()) {
                 total.setText(String.valueOf(showNumber ? reading.getTotalChapters() : chapters.get(0).getNumber()));
             } else {
                 total.setText(String.valueOf(reading.getTotalChapters()));
