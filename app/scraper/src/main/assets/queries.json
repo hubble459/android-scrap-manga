@@ -173,7 +173,7 @@
   },
   "www.mngdoom.com": {
     "title": "div.content-inner.inner-page h5.widget-heading",
-    "description": "div.note.note-default.margin-top-15 p",
+    "description": "div.note ul, div.note p span",
     "cover": "img.img-responsive.mobile-img",
     "alternative_titles": "dt:contains(Alt) + dd",
     "status": "dt:contains(Status) + dd",

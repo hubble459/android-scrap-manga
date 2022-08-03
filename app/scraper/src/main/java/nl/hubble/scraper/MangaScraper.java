@@ -28,11 +28,9 @@ import nl.hubble.scraper.type.ZeroScans;
 import nl.hubble.scraper.util.Utils;
 
 /**
- * - MangaSushi
+ * - MADARA -> USE API /wp-json/wp/v2/search | posts
  * - bato.to
  * - niadd.com
- * - mangafreak.net
- * - mangainn.net
  * - honto.jp
  * - holymanga.net
  * - manytoon.com
@@ -40,7 +38,7 @@ import nl.hubble.scraper.util.Utils;
  * - fanfox.net <- CLOUDFLARE
  */
 public class MangaScraper {
-    public static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36";
+    public static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Safari/537.36";
     private final ArrayList<BaseScraper> scrapers = new ArrayList<>();
     private final Madara madara;
 

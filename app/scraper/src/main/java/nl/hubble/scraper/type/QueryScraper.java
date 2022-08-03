@@ -118,6 +118,7 @@ public class QueryScraper implements BaseScraper {
         doc = Jsoup.connect(url.toExternalForm())
                 .timeout(timeout)
                 .userAgent(MangaScraper.USER_AGENT)
+                .referrer(url.toExternalForm())
                 .followRedirects(true)
                 .get();
     }
